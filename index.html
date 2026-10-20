@@ -141,6 +141,12 @@ nav.links a:hover{color:var(--fg)}
 .out-row b{font-family:var(--mono);font-size:17px}
 .total .lbl{display:block;margin-bottom:4px}
 .total output{display:block;font-family:var(--display);font-weight:900;font-size:clamp(56px,9vw,84px);line-height:.9;color:var(--spark-hi);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.lead{display:grid;gap:12px}
+.lead input[type=email],.lead input[type=tel]{width:100%;background:var(--bg-2);border:1.5px solid var(--line);color:var(--fg);border-radius:6px;font-family:var(--body);font-weight:500;font-size:18px;padding:12px 14px;min-height:52px}
+.lead input:focus{border-color:var(--spark);outline:none}
+.btn-send{background:var(--spark);color:#1a0d02;border:0;cursor:pointer;width:100%}
+.btn-send:disabled{opacity:.6;cursor:default}
+.ok{color:var(--wa);font-weight:600}
 .note{font-size:14px;color:var(--muted);border-left:3px solid var(--spark);padding-left:12px}
 .calc-out .btn{width:100%}
 .err{color:var(--spark-hi);font-size:14px}
@@ -269,7 +275,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
     <div class="sec-head">
       <p class="eyebrow">Cotizador</p>
       <h2>Calculá tu tinglado o galpón</h2>
-      <p>Elegí qué necesitás, cargá largo y ancho, sumá contrapiso o manga para hacienda si te hace falta, y mandanos todo por WhatsApp.</p>
+      <p>Elegí qué necesitás, cargá largo y ancho, sumá contrapiso o manga para hacienda si te hace falta, y dejanos tus datos: te contactamos con la cotización.</p>
     </div>
     <form class="calc" id="calc" novalidate>
       <div class="calc-in">
@@ -320,7 +326,17 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         <div id="o-rows"></div>
         <div class="total"><span class="lbl">Precio estimado</span><output id="o-total" for="largo ancho">USD 19.200</output><small id="o-pend" hidden></small></div>
         <p class="err" id="o-err" hidden>Cargá un largo y un ancho mayores a 0.</p>
-        <a class="btn btn-wa btn-xl" id="calc-wa" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Pedir cotización por WhatsApp</a>
+        <div class="lead" id="lead">
+          <p class="lbl">Dejanos tus datos y te contactamos</p>
+          <div class="field"><label for="l-nombre">Nombre</label><input id="l-nombre" type="text" autocomplete="name" placeholder="Tu nombre" maxlength="80"></div>
+          <div class="field"><label for="l-email">Email</label><input id="l-email" type="email" autocomplete="email" inputmode="email" placeholder="tu@email.com" maxlength="120"></div>
+          <div class="field"><label for="l-tel">Teléfono</label><input id="l-tel" type="tel" autocomplete="tel" inputmode="tel" placeholder="Ej: 2924 123456" maxlength="30"></div>
+          <input type="checkbox" id="l-bot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+          <p class="err" id="l-err" hidden></p>
+          <button type="button" class="btn btn-xl btn-send" id="l-send">Pedir cotización</button>
+          <p class="ok" id="l-ok" role="status" hidden>¡Listo! Recibimos tu consulta y te vamos a contactar a la brevedad.</p>
+          <p class="note">¿Preferís hablar ya? Escribinos por el ícono de WhatsApp de abajo a la derecha.</p>
+        </div>
         <p class="note">Es un precio estimado de referencia, incluye fabricación y montaje. <strong>El flete se cotiza aparte</strong> según la distancia. Los días de trabajo varían según la medida.</p>
       </div>
     </form>
@@ -559,6 +575,7 @@ const fmtN = n => (Math.round(n*10)/10).toLocaleString("es-AR");
 const $ = id => document.getElementById(id);
 const num = id => parseFloat($(id).value.replace(",", "."));
 const precioTxt = (p,u) => p==null ? "Precio a confirmar" : fmt(p)+" / "+u;
+let cotizacionTxt = ""; // resumen de lo cotizado, se manda junto con los datos de contacto
 let contraManual = false; // si el usuario tocó los m² de contrapiso, dejan de seguir al techo
 function calc(){
   const tipo=document.querySelector('input[name="tipo"]:checked').value;
@@ -567,7 +584,7 @@ function calc(){
   const lugar=$("lugar").value.trim();
   const ok = l>0 && a>0;
   const area = ok ? l*a : 0;
-  const P=CONFIG.precios, err=$("o-err"), btn=$("calc-wa");
+  const P=CONFIG.precios, err=$("o-err");
   err.hidden = ok;
 
   const conContra=$("x-contra").checked, conManga=$("x-manga").checked;
@@ -595,14 +612,14 @@ function calc(){
   $("o-pend").hidden = !pend.length;
   $("o-pend").textContent = pend.length ? `+ ${pend.join(" y ")}: precio a confirmar por WhatsApp.` : "";
 
-  if(!filas.length){ btn.href = waLink(`Hola AlmaFuerte, quiero cotizar un ${nombre}.`); return; }
-  let msg = "Hola AlmaFuerte, quiero cotizar:";
+  if(!filas.length){ cotizacionTxt = `Quiere cotizar un ${nombre}.`; return; }
+  let msg = "Cotización pedida desde la web:";
   if(ok) msg += `\n- ${nombre[0].toUpperCase()+nombre.slice(1)} de ${fmtN(l)} x ${fmtN(a)} m (${fmtN(area)} m²): ${fmt(area*P[tipo])}`;
   if(conContra && m2c>0) msg += `\n- Contrapiso: ${fmtN(m2c)} m²`+(P.contrapiso!=null?`: ${fmt(m2c*P.contrapiso)}`:"");
   if(conManga && mm>0) msg += `\n- Manga para hacienda: ${fmtN(mm)} m`+(P.manga!=null?`: ${fmt(mm*P.manga)}`:"");
   if(total>0) msg += `\nPrecio estimado en la web: ${fmt(total)}`+(pend.length?` (sin ${pend.join(" ni ")})`:"")+".";
-  msg += lugar?`\nLocalidad de la obra: ${lugar}.`:`\nLocalidad de la obra: `;
-  btn.href = waLink(msg);
+  msg += lugar?`\nLocalidad de la obra: ${lugar}.`:`\nLocalidad de la obra: (no indicada)`;
+  cotizacionTxt = msg;
 }
 
 /* ===== Init ===== */
@@ -629,6 +646,38 @@ $("contra-igual").addEventListener("click",()=>{ contraManual=false; calc(); });
 $("p-contra").textContent = precioTxt(CONFIG.precios.contrapiso,"m²");
 $("p-manga").textContent = precioTxt(CONFIG.precios.manga,"metro");
 calc();
+
+/* ===== Formulario de contacto (Web3Forms -> almafuertemetalurgica@gmail.com) ===== */
+const WEB3FORMS_KEY = "e955bd84-f7bf-491e-8556-ad6655fdfdc8";
+$("l-send").addEventListener("click", async () => {
+  const nombre=$("l-nombre").value.trim(), email=$("l-email").value.trim(), tel=$("l-tel").value.trim();
+  const err=$("l-err"), ok=$("l-ok"), btn=$("l-send");
+  const fail = t => { err.textContent=t; err.hidden=false; };
+  err.hidden=true; ok.hidden=true;
+  if(nombre.length<2) return fail("Escribí tu nombre.");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("Revisá el email, parece incompleto.");
+  if(tel.replace(/\D/g,"").length<8) return fail("Escribí un teléfono con código de área.");
+  if($("l-bot").checked) return;
+  btn.disabled=true; btn.textContent="Enviando…";
+  try{
+    const r = await fetch("https://api.web3forms.com/submit",{
+      method:"POST", headers:{"Content-Type":"application/json",Accept:"application/json"},
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        subject: "Nueva consulta desde la web: "+nombre,
+        from_name: "Web AlmaFuerte",
+        name: nombre, email, telefono: tel,
+        message: cotizacionTxt || "Consulta general desde la web."
+      })
+    });
+    const d = await r.json();
+    if(!d.success) throw new Error(d.message||"error");
+    ok.hidden=false; btn.textContent="Consulta enviada";
+  }catch(e){
+    fail("No pudimos enviar tu consulta. Probá de nuevo o escribinos por WhatsApp.");
+    btn.disabled=false; btn.textContent="Pedir cotización";
+  }
+});
 
 document.querySelectorAll(".copy-btn[data-copy]").forEach(b=>b.addEventListener("click",()=>{
   const el=document.getElementById(b.dataset.copy), t=el.textContent;
