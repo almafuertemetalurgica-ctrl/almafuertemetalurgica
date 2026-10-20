@@ -1,0 +1,641 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Metalúrgica AlmaFuerte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: una sola columna industrial, bandas de grafito alternadas, todo empuja al botón de WhatsApp.
+   Look oscuro único y deliberado (grafito + chispa de soldadura). */
+:root{
+  --bg:#17191b;        /* grafito */
+  --bg-2:#1f2226;      /* chapa */
+  --bg-3:#2a2e33;      /* perfil */
+  --line:#3a3f46;
+  --fg:#eceae6;
+  --muted:#a3a7ad;
+  --spark:#ff7a1a;     /* chispa de soldadura */
+  --spark-hi:#ffb066;
+  --wa:#25d366;
+  --wa-ink:#06301a;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.95;text-wrap:balance;margin:0;text-transform:uppercase;letter-spacing:.01em}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--spark)}
+section{padding-block:72px}
+.band{background:var(--bg-2);border-block:1px solid var(--line)}
+.sec-head{display:grid;gap:12px;margin-bottom:40px;max-width:760px}
+.sec-head h2{font-size:clamp(40px,7vw,72px)}
+.sec-head p{color:var(--muted);font-size:18px;max-width:60ch}
+:focus-visible{outline:3px solid var(--spark-hi);outline-offset:3px}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--body);font-weight:700;font-size:18px;text-decoration:none;border:0;cursor:pointer;border-radius:6px;padding:16px 24px;min-height:56px;transition:transform .15s ease,filter .15s ease}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.07)}
+.btn-wa{background:var(--wa);color:var(--wa-ink)}
+.btn-wa svg{width:24px;height:24px;flex:none}
+.btn-ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--spark)}
+.btn-xl{font-size:20px;padding:20px 30px;min-height:64px}
+
+/* Header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-mark{width:34px;height:34px;flex:none}
+.brand b{font-family:var(--display);font-weight:900;font-size:24px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.brand small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+nav.links{display:flex;gap:22px;font-weight:600;font-size:15px}
+nav.links a{text-decoration:none;color:var(--muted)}
+nav.links a:hover{color:var(--fg)}
+.top .btn{min-height:42px;padding:9px 16px;font-size:15px}
+@media (max-width:860px){nav.links{display:none}}
+@media (max-width:420px){.top .btn span{display:none}.top .btn{padding:9px 12px}}
+
+/* Hero */
+.hero{position:relative;padding-block:56px 0;overflow:hidden;background:
+  radial-gradient(900px 420px at 78% 70%,rgba(255,122,26,.13),transparent 60%),var(--bg)}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:32px;align-items:end}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(54px,10vw,118px);font-weight:900;line-height:.86}
+.hero h1 em{font-style:normal;color:var(--spark)}
+.hero-copy{display:grid;gap:22px;padding-bottom:56px;min-width:0}
+.hero-copy .lead{font-size:20px;color:var(--muted);max-width:44ch}
+.hero-copy .lead strong{color:var(--fg);font-weight:600}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px}
+.hero-facts{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.hero-facts span::before{content:"";display:inline-block;width:7px;height:7px;background:var(--spark);margin-right:8px;transform:translateY(-1px) rotate(45deg)}
+.hero-art{position:relative;min-width:0}
+.hero-art svg{display:block;width:100%;height:auto}
+.spark{animation:flick 1.6s infinite steps(1)}
+@keyframes flick{0%{opacity:1}12%{opacity:.25}20%{opacity:1}55%{opacity:.6}62%{opacity:1}}
+.ground{height:14px;background:repeating-linear-gradient(-45deg,var(--spark) 0 14px,var(--bg) 14px 28px);opacity:.85}
+
+/* Pasos */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:s;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+@media (max-width:900px){.steps{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.steps{grid-template-columns:1fr}}
+.step{padding:28px 24px 30px;background:var(--bg);display:grid;gap:10px;align-content:start;position:relative;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.step .n{font-family:var(--mono);font-size:13px;color:var(--spark);letter-spacing:.12em}
+.step h3{font-size:44px}
+.step p{color:var(--muted);font-size:16px}
+.step svg{width:44px;height:44px;color:var(--spark)}
+
+/* Productos */
+.prods{display:grid;grid-template-columns:1.25fr 1fr;grid-auto-rows:auto;gap:18px}
+@media (max-width:900px){.prods{grid-template-columns:1fr}}
+.prod{background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.prod.featured{grid-row:span 2;border-color:var(--spark)}
+.prod .art{background:linear-gradient(180deg,#22262b,#1a1d20);aspect-ratio:16/8;max-width:100%;display:grid;place-items:center;border-bottom:1px solid var(--line);position:relative}
+.prod.featured .art{aspect-ratio:16/10}
+.prod .art svg{width:88%;height:auto}
+.prod .tag{position:absolute;top:14px;left:14px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:var(--spark);color:#1a0d02;padding:5px 9px;border-radius:3px;font-weight:600}
+.prod .body{padding:22px 22px 24px;display:grid;gap:12px;flex:1;align-content:start}
+.prod h3{font-size:42px}
+.prod.featured h3{font-size:56px}
+.prod p{color:var(--muted)}
+.prod ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px}
+.prod li{padding-left:18px;position:relative}
+.prod li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;background:var(--spark)}
+.prod .foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:0 22px 22px}
+.price{font-family:var(--mono);font-size:14px;color:var(--muted)}
+.price b{font-family:var(--display);font-size:30px;color:var(--fg);font-weight:800;letter-spacing:.02em}
+.prod .foot .btn{min-height:46px;padding:11px 18px;font-size:16px}
+.prod.soon{border-style:dashed;background:transparent}
+.prod.soon .body{padding:24px}
+
+/* Cotizador */
+.calc{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+@media (max-width:860px){.calc{grid-template-columns:1fr}}
+.calc-in{padding:28px;display:grid;gap:22px;align-content:start;min-width:0}
+.calc-out{padding:28px;background:var(--bg-3);display:grid;gap:18px;align-content:start;min-width:0;position:relative}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:4px;gap:4px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{text-align:center;padding:12px 8px;border-radius:5px;cursor:pointer;font-weight:700;font-size:17px;color:var(--muted)}
+.seg label small{display:block;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.06em}
+.seg input:checked+label{background:var(--spark);color:#1a0d02}
+.seg input:focus-visible+label{outline:3px solid var(--spark-hi);outline-offset:2px}
+.field{display:grid;gap:6px}
+.field label,.lbl{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.dims{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px}
+.dims .x{font-family:var(--display);font-size:34px;color:var(--spark);padding-bottom:6px}
+.num{position:relative}
+.num input,.field input[type=text]{width:100%;background:var(--bg-2);border:1.5px solid var(--line);color:var(--fg);border-radius:6px;font-family:var(--display);font-weight:800;font-size:40px;padding:8px 44px 8px 14px;min-height:64px;font-variant-numeric:tabular-nums}
+.field input[type=text]{font-family:var(--body);font-weight:500;font-size:18px;padding:12px 14px;min-height:52px}
+.num input:focus,.field input:focus{border-color:var(--spark);outline:none}
+.num span{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-family:var(--mono);color:var(--muted);font-size:15px}
+.quick{display:flex;flex-wrap:wrap;gap:8px}
+.quick button{font-family:var(--mono);font-size:14px;background:transparent;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px 11px;cursor:pointer}
+.quick button:hover{border-color:var(--spark);color:var(--spark-hi)}
+.out-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:12px;font-variant-numeric:tabular-nums}
+.out-row span{color:var(--muted)}
+.out-row b{font-family:var(--mono);font-size:17px}
+.total .lbl{display:block;margin-bottom:4px}
+.total output{display:block;font-family:var(--display);font-weight:900;font-size:clamp(56px,9vw,84px);line-height:.9;color:var(--spark-hi);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.note{font-size:14px;color:var(--muted);border-left:3px solid var(--spark);padding-left:12px}
+.calc-out .btn{width:100%}
+.err{color:var(--spark-hi);font-size:14px}
+#o-rows{display:grid;gap:12px}
+.out-row b.tbd{font-size:14px;color:var(--spark-hi);letter-spacing:.06em;text-transform:uppercase}
+.out-row span small{display:block;font-family:var(--mono);font-size:12px}
+.total small{display:block;margin-top:10px;color:var(--muted);font-size:14px}
+.extras{display:grid;gap:10px}
+.extra{background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:12px}
+.extra:has(input[type=checkbox]:checked){border-color:var(--spark)}
+.chk{display:flex;gap:12px;align-items:center;cursor:pointer;font-weight:700;font-size:17px}
+.chk input{width:22px;height:22px;accent-color:var(--spark);flex:none;margin:0}
+.chk small{display:block;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.extra-in{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.num.sm{flex:1 1 140px;min-width:0}
+.num.sm input{font-size:28px;min-height:52px;background:var(--bg)}
+
+/* Sur */
+.south{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+@media (max-width:900px){.south{grid-template-columns:1fr}}
+.south h2{font-size:clamp(46px,8vw,84px)}
+.south .copy{display:grid;gap:18px;min-width:0}
+.south .copy p{color:var(--muted);font-size:18px}
+.towns{display:flex;flex-wrap:wrap;gap:8px}
+.towns span{font-weight:600;font-size:15px;border:1px solid var(--line);border-radius:4px;padding:7px 11px;background:var(--bg)}
+.towns span.hot{border-color:var(--spark);color:var(--spark-hi)}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:480px){.who{grid-template-columns:1fr}}
+.who div{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:14px;font-size:15px;color:var(--muted)}
+.who b{display:block;color:var(--fg);font-size:16px;margin-bottom:2px}
+.map{min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
+.map svg{display:block;width:100%;height:auto}
+.route{stroke-dasharray:8 8;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-16}}
+
+/* Contacto */
+.contact{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start}
+@media (max-width:860px){.contact{grid-template-columns:1fr}}
+.contact h2{font-size:clamp(46px,8vw,84px)}
+.cards{display:grid;gap:12px;min-width:0}
+.ccard{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:16px}
+.ccard svg{width:28px;height:28px;color:var(--spark)}
+.ccard .v{font-weight:600;font-size:18px;user-select:all;overflow-wrap:anywhere;min-width:0}
+.ccard .k{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.copy-btn{font-family:var(--mono);font-size:12px;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:7px 10px;cursor:pointer}
+.copy-btn:hover{color:var(--fg);border-color:var(--spark)}
+
+footer{padding-block:28px 110px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+/* Flotante */
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;width:62px;height:62px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 0 6px rgba(37,211,102,.15);text-decoration:none}
+.fab svg{width:32px;height:32px;color:var(--wa-ink)}
+.fab::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--wa);opacity:0;animation:ping 2.6s infinite}
+@keyframes ping{0%{transform:scale(.9);opacity:.7}70%,100%{transform:scale(1.35);opacity:0}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 32 32"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.1c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.7 12.7-12.7S23 3 16 3Zm0 23.2c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.2 1.3-4-.3-.4a10.4 10.4 0 0 1-1.6-5.6C5.5 9.9 10.2 5.3 16 5.3S26.5 9.9 26.5 15.7 21.8 26.2 16 26.2Zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.9-1.7-2.2-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4Z"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Metalúrgica AlmaFuerte, inicio">
+      <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="4" fill="#ff7a1a"/><path d="M6 25 V15 Q17 5 28 15 V25" fill="none" stroke="#17191b" stroke-width="3"/><path d="M6 25H28" stroke="#17191b" stroke-width="3"/><path d="M11 25V17M17 25V13M23 25V17" stroke="#17191b" stroke-width="2"/></svg>
+      <span><b>AlmaFuerte</b><small>Metalúrgica · Darregueira</small></span>
+    </a>
+    <nav class="links" aria-label="Secciones">
+      <a href="#como">Cómo trabajamos</a><a href="#productos">Productos</a><a href="#cotizador">Cotizador</a><a href="#sur">Neuquén</a><a href="#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-wa js-wa" data-msg="Hola AlmaFuerte, quiero pedir una cotización." href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg><span>Cotizá</span></a>
+  </div>
+</header>
+
+<main>
+<!-- 1. Portada -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Fabricamos · Llevamos · Montamos</p>
+      <h1>Tinglados y galpones <em>llave en mano</em></h1>
+      <p class="lead">Los fabricamos en nuestro taller, los llevamos con <strong>camiones propios</strong> y los montamos en tu terreno. Medidas estándar o a medida, <strong>a todo el país</strong>.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-wa btn-xl js-wa" data-msg="Hola AlmaFuerte, quiero cotizar un tinglado/galpón." href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Cotizá por WhatsApp</a>
+        <a class="btn btn-ghost btn-xl" href="#cotizador">Calculá tu precio</a>
+      </div>
+      <div class="hero-facts"><span>Camiones propios</span><span>Montaje en obra</span><span>10×10 en ~7 días</span></div>
+    </div>
+    <div class="hero-art" id="hero-art" aria-label="Estructura de tinglado de acero en montaje" role="img"></div>
+  </div>
+  <div class="ground" aria-hidden="true"></div>
+</section>
+
+<!-- 2. Cómo trabajamos -->
+<section id="como">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Cómo trabajamos</p>
+      <h2>Un solo responsable, de punta a punta</h2>
+      <p>Vos nos pasás la medida y el lugar. Del resto nos encargamos nosotros.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="8" y="5" width="28" height="34" rx="2"/><path d="M14 14h16M14 21h16M14 28h9"/></svg><span class="n">PASO 1</span><h3>Cotizamos</h3><p>Nos escribís por WhatsApp con medidas y localidad. Te pasamos precio, plazo y flete.</p></div>
+      <div class="step"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 36h32M10 36V22l12-9 12 9v14"/><path d="M22 4v5M15 6l3 4M29 6l-3 4"/></svg><span class="n">PASO 2</span><h3>Fabricamos</h3><p>Cortamos, soldamos y pintamos la estructura en nuestro taller de Darregueira.</p></div>
+      <div class="step"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M3 30V12h24v18M27 18h8l6 7v5h-14"/><circle cx="11" cy="32" r="4"/><circle cx="33" cy="32" r="4"/></svg><span class="n">PASO 3</span><h3>Llevamos</h3><p>Viaja en nuestros camiones hasta tu obra. Sin intermediarios ni transportes de terceros.</p></div>
+      <div class="step"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 38h34M9 38V20Q22 8 35 20v18"/><path d="M15 38V18M22 38V14M29 38V18"/></svg><span class="n">PASO 4</span><h3>Montamos</h3><p>Nuestro equipo arma todo en el lugar y te entrega la estructura terminada.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Productos -->
+<section class="band" id="productos">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Productos</p>
+      <h2>Lo que fabricamos</h2>
+      <p>Medidas estándar para salir rápido o a medida para tu proyecto.</p>
+    </div>
+    <div class="prods" id="prods"></div>
+  </div>
+</section>
+
+<!-- 4. Cotizador -->
+<section id="cotizador">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Cotizador</p>
+      <h2>Calculá tu tinglado o galpón</h2>
+      <p>Elegí qué necesitás, cargá largo y ancho, sumá contrapiso o manga para hacienda si te hace falta, y mandanos todo por WhatsApp.</p>
+    </div>
+    <form class="calc" id="calc" novalidate>
+      <div class="calc-in">
+        <div class="field">
+          <span class="lbl" id="tipo-lbl">¿Qué necesitás?</span>
+          <div class="seg" role="radiogroup" aria-labelledby="tipo-lbl">
+            <input type="radio" name="tipo" id="t-tinglado" value="tinglado" checked><label for="t-tinglado">Tinglado<small>USD 80 / m²</small></label>
+            <input type="radio" name="tipo" id="t-galpon" value="galpon"><label for="t-galpon">Galpón<small>USD 110 / m²</small></label>
+          </div>
+        </div>
+        <div class="dims">
+          <div class="field"><label for="largo">Largo</label><div class="num"><input id="largo" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="20"><span>m</span></div></div>
+          <span class="x" aria-hidden="true">×</span>
+          <div class="field"><label for="ancho">Ancho</label><div class="num"><input id="ancho" type="number" inputmode="decimal" min="1" max="200" step="0.5" value="12"><span>m</span></div></div>
+        </div>
+        <div class="field">
+          <span class="lbl">Medidas comunes</span>
+          <div class="quick">
+            <button type="button" data-l="10" data-a="10">10 × 10</button>
+            <button type="button" data-l="15" data-a="10">15 × 10</button>
+            <button type="button" data-l="20" data-a="12">20 × 12</button>
+            <button type="button" data-l="30" data-a="15">30 × 15</button>
+            <button type="button" data-l="40" data-a="20">40 × 20</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Sumá a tu obra</span>
+          <div class="extras">
+            <div class="extra">
+              <label class="chk"><input type="checkbox" id="x-contra"><span>Contrapiso<small id="p-contra"></small></span></label>
+              <div class="extra-in" id="in-contra" hidden>
+                <div class="num sm"><input id="contra-m2" type="number" inputmode="decimal" min="1" max="100000" step="1" aria-label="Metros cuadrados de contrapiso"><span>m²</span></div>
+                <div class="quick"><button type="button" id="contra-igual">Igual que el techo</button></div>
+              </div>
+            </div>
+            <div class="extra">
+              <label class="chk"><input type="checkbox" id="x-manga"><span>Manga para hacienda<small id="p-manga"></small></span></label>
+              <div class="extra-in" id="in-manga" hidden>
+                <div class="num sm"><input id="manga-m" type="number" inputmode="decimal" min="1" max="200" step="0.5" value="10" aria-label="Largo de la manga en metros"><span>m</span></div>
+                <div class="quick"><button type="button" data-manga="6">6 m</button><button type="button" data-manga="10">10 m</button><button type="button" data-manga="15">15 m</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field"><label for="lugar">Localidad de la obra (opcional)</label><input id="lugar" type="text" placeholder="Ej: Añelo, Neuquén" autocomplete="address-level2"></div>
+      </div>
+      <div class="calc-out" aria-live="polite">
+        <div id="o-rows"></div>
+        <div class="total"><span class="lbl">Precio estimado</span><output id="o-total" for="largo ancho">USD 19.200</output><small id="o-pend" hidden></small></div>
+        <p class="err" id="o-err" hidden>Cargá un largo y un ancho mayores a 0.</p>
+        <a class="btn btn-wa btn-xl" id="calc-wa" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Pedir cotización por WhatsApp</a>
+        <p class="note">Es un precio estimado de referencia, incluye fabricación y montaje. <strong>El flete se cotiza aparte</strong> según la distancia. Los días de trabajo varían según la medida.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- 5. Llegamos al sur -->
+<section class="band" id="sur">
+  <div class="wrap south">
+    <div class="copy">
+      <p class="eyebrow">Neuquén · Vaca Muerta</p>
+      <h2>Llegamos al sur con camión propio</h2>
+      <p>Hacemos bases, depósitos, playones y talleres en la cuenca neuquina. Salimos desde Darregueira con la estructura armada en taller, y la montamos en tu locación.</p>
+      <div class="towns" aria-label="Localidades donde trabajamos">
+        <span class="hot">Añelo</span><span class="hot">Cutral Có</span><span class="hot">Plaza Huincul</span><span class="hot">Zapala</span><span>Rincón de los Sauces</span><span>Neuquén capital</span><span>Centenario</span><span>Alto Valle</span>
+      </div>
+      <div class="who">
+        <div><b>Servicios petroleros</b>Bases, depósitos, playones y talleres.</div>
+        <div><b>Corralones y logística</b>Acopio y carga bajo techo.</div>
+        <div><b>Productores rurales</b>Maquinaria, forraje y hacienda.</div>
+        <div><b>Crianceros</b>Refugio y comederos para el piño.</div>
+      </div>
+      <div><a class="btn btn-wa js-wa" data-msg="Hola AlmaFuerte, necesito una estructura en Neuquén / Vaca Muerta." href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Cotizá tu obra en el sur</a></div>
+    </div>
+    <div class="map" id="map"></div>
+  </div>
+</section>
+
+<!-- 6. Contacto -->
+<section id="contacto">
+  <div class="wrap contact">
+    <div class="sec-head" style="margin:0">
+      <p class="eyebrow">Contacto</p>
+      <h2>Escribinos y te cotizamos hoy</h2>
+      <p>La forma más rápida es WhatsApp. Pasanos medida, uso y localidad.</p>
+      <div style="margin-top:12px"><a class="btn btn-wa btn-xl js-wa" data-msg="Hola AlmaFuerte, quiero pedir una cotización." href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Abrir WhatsApp</a></div>
+    </div>
+    <div class="cards">
+      <div class="ccard"><svg aria-hidden="true"><use href="#i-wa"/></svg><div style="min-width:0"><div class="k">WhatsApp</div><div class="v" id="c-wa"></div></div><button class="copy-btn" type="button" data-copy="c-wa">Copiar</button></div>
+      <div class="ccard"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="6" width="22" height="16" rx="2"/><path d="m4 8 10 7 10-7"/></svg><div style="min-width:0"><div class="k">Email</div><div class="v" id="c-mail"></div></div><button class="copy-btn" type="button" data-copy="c-mail">Copiar</button></div>
+      <div class="ccard"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M14 25s8-7.2 8-13a8 8 0 0 0-16 0c0 5.8 8 13 8 13Z"/><circle cx="14" cy="12" r="3"/></svg><div style="min-width:0"><div class="k">Taller</div><div class="v" id="c-dir"></div></div><a class="copy-btn" id="c-maps" href="#" target="_blank" rel="noopener" style="text-decoration:none">Mapa</a></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap"><span>© <span id="yr">2026</span> Metalúrgica AlmaFuerte · Darregueira, Buenos Aires</span><span>Tinglados · Galpones · Mangas · Carros comederos</span></div>
+</footer>
+
+<a class="fab js-wa" data-msg="Hola AlmaFuerte, quiero pedir una cotización." href="#" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
+
+<script>
+/* ===== Datos editables ===== */
+const CONFIG = {
+  whatsapp: "",                              // Ej: "5492924123456" (código país 54 + 9 + área sin 0 + número sin 15)
+  whatsappVisible: "[número de WhatsApp]",   // Cómo se muestra en Contacto
+  email: "[email de contacto]",
+  direccion: "Darregueira, Buenos Aires",
+  precios: {
+    tinglado: 80,      // USD por m²
+    galpon: 110,       // USD por m²
+    contrapiso: null,  // USD por m² — null = "a confirmar" (se cotiza por WhatsApp)
+    manga: null        // USD por metro de manga — null = "a confirmar"
+  }
+};
+
+/* Catálogo: para sumar un producto (por ej. reventa de Guatraché), agregá un objeto acá. */
+const PRODUCTOS = [
+  { id:"tinglado", nombre:"Tinglados", tag:"Más pedido", destacado:true, art:"tinglado",
+    desc:"Estructura de acero con techo parabólico o a dos aguas. Para playones, acopio, maquinaria y hacienda.",
+    items:["Medidas estándar y a medida","Luces amplias sin columnas intermedias","Cubierta de chapa incluida","10×10 m listo en unos 7 días"],
+    precio:"USD 80", unidad:"/ m²", msg:"Hola AlmaFuerte, quiero cotizar un tinglado." },
+  { id:"galpon", nombre:"Galpones", art:"galpon",
+    desc:"Cerrado con chapa en laterales y portón. Ideal para depósitos, talleres y bases operativas.",
+    items:["Portones y aberturas a medida","Para depósito, taller o base"],
+    precio:"USD 110", unidad:"/ m²", msg:"Hola AlmaFuerte, quiero cotizar un galpón." },
+  { id:"carro", nombre:"Carros comederos", art:"carro",
+    desc:"Comederos de chapa reforzada sobre ruedas, para mover la ración donde está la hacienda.",
+    items:["Distintas capacidades","Chasis y tolva reforzados"],
+    precio:"Consultá", unidad:"", msg:"Hola AlmaFuerte, quiero consultar por carros comederos." },
+  { id:"manga", nombre:"Mangas para hacienda", art:"manga",
+    desc:"Mangas de caño y chapa para trabajar la hacienda seguro: vacunar, apartar y cargar.",
+    items:["Largo a medida","Se puede sumar cepo, brete y embarcadero","Se cotiza junto con tu tinglado"],
+    precio:"Consultá", unidad:"", msg:"Hola AlmaFuerte, quiero cotizar una manga para hacienda." },
+  { id:"reventa", nombre:"Próximamente", soon:true,
+    desc:"Vamos a sumar productos de fabricantes de Guatraché. Si buscás algo puntual, preguntanos.",
+    msg:"Hola AlmaFuerte, quería consultar por otros productos." }
+];
+
+/* ===== WhatsApp ===== */
+function waLink(msg){
+  const base = CONFIG.whatsapp ? "https://wa.me/" + CONFIG.whatsapp : "https://wa.me/";
+  return base + "?text=" + encodeURIComponent(msg);
+}
+function wireWa(root){
+  root.querySelectorAll(".js-wa").forEach(a => { a.href = waLink(a.dataset.msg || "Hola AlmaFuerte"); });
+}
+
+/* ===== Dibujos ===== */
+const NS = "http://www.w3.org/2000/svg";
+function frameSVG({w=360,h=130,rise=74,n=7,dx=34,dy=-13,x0=40,y0=300,walls=false,gable=false,sparks=true,vb="0 0 680 360"}){
+  let s = `<svg viewBox="${vb}" xmlns="${NS}">`;
+  const arc = (t)=> gable ? (t<.5? rise*2*t : rise*2*(1-t)) : rise*4*t*(1-t);
+  const tops=[];
+  for(let i=n-1;i>=0;i--){
+    const ox=x0+i*dx, oy=y0+i*dy, top=oy-h, op=(0.35+0.65*(1-i/(n-1))).toFixed(2);
+    const pt=(t,off=0)=>[ox+w*t, top-arc(t)+off];
+    let o="",inn="";
+    for(let k=0;k<=24;k++){const t=k/24;const p=pt(t),q=pt(t,15);o+=(k?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1);inn+=(k?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1);}
+    let lace="";
+    for(let k=0;k<12;k++){const a=pt(k/12),b=pt((k+1)/12,15);const c=pt((k+1)/12);lace+=`M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}L${c[0].toFixed(1)} ${c[1].toFixed(1)}`;}
+    s+=`<g opacity="${op}" stroke="#c9ccd1" fill="none">`;
+    if(walls && i===0){
+      let cl=""; for(let x=ox;x<=ox+w;x+=12){cl+=`M${x} ${oy}V${(top-arc((x-ox)/w)+8).toFixed(1)}`;}
+      s+=`<path d="${cl}" stroke="#5a6068" stroke-width="2"/>`;
+      s+=`<rect x="${ox+w*0.32}" y="${oy-96}" width="${w*0.36}" height="96" fill="#2a2e33" stroke="#ff7a1a" stroke-width="3"/>`;
+      let rl=""; for(let y=oy-88;y<oy;y+=10){rl+=`M${ox+w*0.32} ${y}h${w*0.36}`;} s+=`<path d="${rl}" stroke="#3a3f46" stroke-width="2"/>`;
+    }
+    s+=`<path d="M${ox} ${oy}V${top}M${ox+w} ${oy}V${top}" stroke-width="7"/>`;
+    s+=`<path d="${o}" stroke-width="4"/><path d="${inn}" stroke-width="3"/><path d="${lace}" stroke-width="1.6"/></g>`;
+    tops.push({i,pts:[0,.18,.35,.5,.65,.82,1].map(t=>pt(t))});
+  }
+  // correas
+  tops.sort((a,b)=>a.i-b.i);
+  let pur="";
+  for(let i=0;i<tops.length-1;i++){tops[i].pts.forEach((p,j)=>{const q=tops[i+1].pts[j];pur+=`M${p[0].toFixed(1)} ${p[1].toFixed(1)}L${q[0].toFixed(1)} ${q[1].toFixed(1)}`;});}
+  s+=`<path d="${pur}" stroke="#8b9097" stroke-width="2" fill="none"/>`;
+  if(sparks){
+    const p=tops[2].pts[2], cx=p[0], cy=p[1];
+    let r=""; for(let k=0;k<14;k++){const a=(k/14)*Math.PI*2, l=10+((k*37)%22); r+=`M${(cx+Math.cos(a)*5).toFixed(1)} ${(cy+Math.sin(a)*5).toFixed(1)}L${(cx+Math.cos(a)*l).toFixed(1)} ${(cy+Math.sin(a)*l+ (Math.sin(a)>0? l*.4:0)).toFixed(1)}`;}
+    s+=`<g class="spark"><circle cx="${cx}" cy="${cy}" r="18" fill="#ff7a1a" opacity=".25"/><path d="${r}" stroke="#ffb066" stroke-width="2" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="4" fill="#fff4e6"/></g>`;
+  }
+  s+=`</svg>`;
+  return s;
+}
+function carroSVG(){
+  return `<svg viewBox="0 0 520 260" xmlns="${NS}" fill="none">
+  <path d="M30 200H470" stroke="#3a3f46" stroke-width="3"/>
+  <path d="M60 150h360l-10 40H70z" fill="#2a2e33" stroke="#c9ccd1" stroke-width="4"/>
+  <path d="M90 150 120 60h260l30 90" fill="#22262b" stroke="#c9ccd1" stroke-width="4"/>
+  <path d="M120 60h260" stroke="#ff7a1a" stroke-width="6"/>
+  <path d="M150 60v90M200 60v90M250 60v90M300 60v90M350 60v90" stroke="#5a6068" stroke-width="2"/>
+  <path d="M420 165h60l10 10" stroke="#c9ccd1" stroke-width="5"/>
+  <circle cx="150" cy="200" r="30" fill="#17191b" stroke="#c9ccd1" stroke-width="5"/><circle cx="150" cy="200" r="9" fill="#ff7a1a"/>
+  <circle cx="330" cy="200" r="30" fill="#17191b" stroke="#c9ccd1" stroke-width="5"/><circle cx="330" cy="200" r="9" fill="#ff7a1a"/>
+  <path d="M70 175H40v20" stroke="#ff7a1a" stroke-width="4"/>
+  </svg>`;
+}
+function mangaSVG(){
+  // manga curva vista desde arriba en perspectiva: dos hileras de postes con caños
+  const pts=k=>{const t=k/9;return [70+t*380, 175-Math.sin(t*Math.PI)*60];};
+  let back="",front="",posts="";
+  for(let k=0;k<=9;k++){
+    const [x,y]=pts(k), yb=y-34, yf=y+18;
+    posts+=`M${x.toFixed(1)} ${(yb-46).toFixed(1)}V${yb.toFixed(1)}M${(x+10).toFixed(1)} ${(yf-50).toFixed(1)}V${yf.toFixed(1)}`;
+  }
+  for(const off of [-78,-64,-50]){let d="";for(let k=0;k<=9;k++){const[x,y]=pts(k);d+=(k?"L":"M")+x.toFixed(1)+" "+(y+off).toFixed(1);}back+=`<path d="${d}" stroke="#8b9097" stroke-width="3"/>`;}
+  for(const off of [-50,-36,-22,-8]){let d="";for(let k=0;k<=9;k++){const[x,y]=pts(k);d+=(k?"L":"M")+(x+10).toFixed(1)+" "+(y+18+off).toFixed(1);}front+=`<path d="${d}" stroke="#c9ccd1" stroke-width="4"/>`;}
+  const [gx,gy]=pts(9);
+  return `<svg viewBox="0 0 520 240" xmlns="${NS}" fill="none">
+  <path d="M30 220H490" stroke="#3a3f46" stroke-width="3"/>
+  ${back}<path d="${posts}" stroke="#c9ccd1" stroke-width="5"/>${front}
+  <rect x="${gx-6}" y="${gy-90}" width="34" height="110" fill="#2a2e33" stroke="#ff7a1a" stroke-width="4"/>
+  </svg>`;
+}
+function soonSVG(){
+  return `<svg viewBox="0 0 520 220" xmlns="${NS}" fill="none"><rect x="150" y="50" width="220" height="120" rx="6" stroke="#5a6068" stroke-width="3" stroke-dasharray="10 8"/><path d="M260 85v50M235 110h50" stroke="#ff7a1a" stroke-width="5" stroke-linecap="round"/></svg>`;
+}
+function artFor(p){
+  if(p.art==="tinglado") return frameSVG({vb:"0 0 640 380",x0:30,y0:330,w:330,h:120,rise:80,n:7,dx:36,dy:-15});
+  if(p.art==="galpon") return frameSVG({vb:"0 0 600 320",x0:30,y0:280,w:300,h:110,rise:50,n:6,dx:36,dy:-13,walls:true,gable:true,sparks:false});
+  if(p.art==="carro") return carroSVG();
+  if(p.art==="manga") return mangaSVG();
+  return soonSVG();
+}
+
+/* ===== Productos ===== */
+function renderProductos(){
+  const el=document.getElementById("prods");
+  el.innerHTML = PRODUCTOS.map(p=>`
+    <article class="prod${p.destacado?" featured":""}${p.soon?" soon":""}">
+      ${p.soon?"":`<div class="art">${p.tag?`<span class="tag">${p.tag}</span>`:""}${artFor(p)}</div>`}
+      <div class="body">
+        <h3>${p.nombre}</h3>
+        <p>${p.desc}</p>
+        ${p.items?`<ul>${p.items.map(i=>`<li>${i}</li>`).join("")}</ul>`:""}
+      </div>
+      <div class="foot">
+        ${p.precio?`<span class="price">${p.unidad?"desde ":""}<b>${p.precio}</b> ${p.unidad}</span>`:"<span></span>"}
+        <a class="btn ${p.soon?"btn-ghost":"btn-wa"} js-wa" data-msg="${p.msg}" href="#" target="_blank" rel="noopener">${p.soon?"":`<svg aria-hidden="true"><use href="#i-wa"/></svg>`}${p.soon?"Consultanos":"Cotizá"}</a>
+      </div>
+    </article>`).join("");
+}
+
+/* ===== Mapa sur ===== */
+function renderMapa(){
+  // proyección simple: x=(lon+71.2)*100, y=(-lat-36.9)*100
+  const P=(lon,lat)=>[(lon+71.2)*100,(-lat-36.9)*100];
+  const L=[
+    ["Darregueira",-63.16,-37.69,"o","end",-12,-14],
+    ["Guatraché",-63.53,-37.67,"s","end",-12,22],
+    ["Rincón de los Sauces",-68.93,-37.39,"t","start",12,5],
+    ["Añelo",-68.79,-38.35,"h","start",12,-8],
+    ["Centenario",-68.13,-38.83,"t","end",-10,-12],
+    ["Neuquén",-68.06,-38.95,"t","start",10,-6],
+    ["Alto Valle",-67.58,-39.03,"t","start",10,18],
+    ["Cutral Có · Plaza Huincul",-69.21,-38.93,"h","middle",0,32],
+    ["Zapala",-70.05,-38.90,"h","middle",0,-16]
+  ];
+  const o=P(-63.16,-37.69), nq=P(-68.06,-38.95);
+  let s=`<svg viewBox="0 0 900 300" xmlns="${NS}" role="img" aria-label="Recorrido desde Darregueira hasta Neuquén y Vaca Muerta">`;
+  // grilla
+  let g=""; for(let x=0;x<=900;x+=50)g+=`M${x} 0V300`; for(let y=0;y<=300;y+=50)g+=`M0 ${y}H900`;
+  s+=`<path d="${g}" stroke="#2a2e33" stroke-width="1"/>`;
+  s+=`<text x="16" y="28" fill="#a3a7ad" font-family="IBM Plex Mono,monospace" font-size="15" letter-spacing="2">NEUQUÉN</text>`;
+  s+=`<text x="884" y="290" text-anchor="end" fill="#a3a7ad" font-family="IBM Plex Mono,monospace" font-size="15" letter-spacing="2">BS. AS. · LA PAMPA</text>`;
+  s+=`<path class="route" d="M${o[0]} ${o[1]} C ${o[0]-180} ${o[1]+40}, ${nq[0]+200} ${nq[1]+20}, ${nq[0]} ${nq[1]}" stroke="#ff7a1a" stroke-width="3" fill="none"/>`;
+  L.forEach(([n,lon,lat,k,anc,dx,dy])=>{
+    const [x,y]=P(lon,lat);
+    const hot=k==="h", orig=k==="o";
+    const r=orig?9:hot?7:5;
+    const fill=orig?"#ff7a1a":hot?"#ffb066":"#c9ccd1";
+    if(orig) s+=`<circle cx="${x}" cy="${y}" r="20" fill="#ff7a1a" opacity=".18"/>`;
+    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${fill}" stroke="#17191b" stroke-width="2"/>`;
+    s+=`<text x="${(x+dx).toFixed(1)}" y="${(y+dy+5).toFixed(1)}" text-anchor="${anc}" fill="${orig||hot?"#eceae6":"#a3a7ad"}" font-family="Barlow,sans-serif" font-weight="${orig||hot?700:500}" font-size="${orig?19:16}">${n}</text>`;
+  });
+  s+=`<text x="${(o[0]-12)}" y="${o[1]+40}" text-anchor="end" fill="#ff7a1a" font-family="IBM Plex Mono,monospace" font-size="13" letter-spacing="1.5">TALLER</text>`;
+  s+=`</svg>`;
+  document.getElementById("map").innerHTML=s;
+}
+
+/* ===== Cotizador ===== */
+const fmt = n => "USD " + Math.round(n).toLocaleString("es-AR");
+const fmtN = n => (Math.round(n*10)/10).toLocaleString("es-AR");
+const $ = id => document.getElementById(id);
+const num = id => parseFloat($(id).value.replace(",", "."));
+const precioTxt = (p,u) => p==null ? "Precio a confirmar" : fmt(p)+" / "+u;
+let contraManual = false; // si el usuario tocó los m² de contrapiso, dejan de seguir al techo
+function calc(){
+  const tipo=document.querySelector('input[name="tipo"]:checked').value;
+  const nombre = tipo==="galpon"?"galpón":"tinglado";
+  const l=num("largo"), a=num("ancho");
+  const lugar=$("lugar").value.trim();
+  const ok = l>0 && a>0;
+  const area = ok ? l*a : 0;
+  const P=CONFIG.precios, err=$("o-err"), btn=$("calc-wa");
+  err.hidden = ok;
+
+  const conContra=$("x-contra").checked, conManga=$("x-manga").checked;
+  $("in-contra").hidden=!conContra; $("in-manga").hidden=!conManga;
+  if(!contraManual && ok) $("contra-m2").value = Math.round(area);
+  const m2c=num("contra-m2"), mm=num("manga-m");
+
+  // filas: [etiqueta, detalle, importe | null (a confirmar)]
+  const filas=[];
+  if(ok) filas.push([nombre[0].toUpperCase()+nombre.slice(1), `${fmtN(area)} m² × ${fmt(P[tipo])}`, area*P[tipo]]);
+  if(conContra && m2c>0) filas.push(["Contrapiso", `${fmtN(m2c)} m²`+(P.contrapiso!=null?` × ${fmt(P.contrapiso)}`:""), P.contrapiso!=null ? m2c*P.contrapiso : null]);
+  if(conManga && mm>0) filas.push(["Manga para hacienda", `${fmtN(mm)} m`+(P.manga!=null?` × ${fmt(P.manga)}`:""), P.manga!=null ? mm*P.manga : null]);
+
+  let html = filas.map(([n,d,v])=>`<div class="out-row"><span>${n}<small>${d}</small></span>${v==null?'<b class="tbd">A confirmar</b>':`<b>${fmt(v)}</b>`}</div>`).join("");
+  if(ok){
+    // 100 m² ≈ 7 días; escala orientativa
+    const dias=Math.max(3, Math.round(7*Math.pow(area/100,0.75)));
+    html += `<div class="out-row"><span>Trabajo estimado (techo)</span><b>~${dias} días</b></div>`;
+  }
+  $("o-rows").innerHTML = html;
+
+  const total = filas.reduce((s,f)=>s+(f[2]||0),0);
+  const pend = filas.filter(f=>f[2]==null).map(f=>f[0].toLowerCase());
+  $("o-total").textContent = total>0 ? fmt(total) : "—";
+  $("o-pend").hidden = !pend.length;
+  $("o-pend").textContent = pend.length ? `+ ${pend.join(" y ")}: precio a confirmar por WhatsApp.` : "";
+
+  if(!filas.length){ btn.href = waLink(`Hola AlmaFuerte, quiero cotizar un ${nombre}.`); return; }
+  let msg = "Hola AlmaFuerte, quiero cotizar:";
+  if(ok) msg += `\n- ${nombre[0].toUpperCase()+nombre.slice(1)} de ${fmtN(l)} x ${fmtN(a)} m (${fmtN(area)} m²): ${fmt(area*P[tipo])}`;
+  if(conContra && m2c>0) msg += `\n- Contrapiso: ${fmtN(m2c)} m²`+(P.contrapiso!=null?`: ${fmt(m2c*P.contrapiso)}`:"");
+  if(conManga && mm>0) msg += `\n- Manga para hacienda: ${fmtN(mm)} m`+(P.manga!=null?`: ${fmt(mm*P.manga)}`:"");
+  if(total>0) msg += `\nPrecio estimado en la web: ${fmt(total)}`+(pend.length?` (sin ${pend.join(" ni ")})`:"")+".";
+  msg += lugar?`\nLocalidad de la obra: ${lugar}.`:`\nLocalidad de la obra: `;
+  btn.href = waLink(msg);
+}
+
+/* ===== Init ===== */
+document.getElementById("hero-art").innerHTML = frameSVG({vb:"0 0 640 400",x0:20,y0:390,w:340,h:150,rise:90,n:8,dx:36,dy:-15});
+renderProductos();
+renderMapa();
+wireWa(document);
+document.getElementById("c-wa").textContent = CONFIG.whatsappVisible;
+document.getElementById("c-mail").textContent = CONFIG.email;
+document.getElementById("c-dir").textContent = CONFIG.direccion;
+document.getElementById("c-maps").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Darregueira, Buenos Aires, Argentina");
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+const form=document.getElementById("calc");
+form.addEventListener("input",calc);
+form.addEventListener("change",calc);
+form.addEventListener("submit",e=>e.preventDefault());
+form.querySelectorAll(".quick button[data-l]").forEach(b=>b.addEventListener("click",()=>{
+  $("largo").value=b.dataset.l; $("ancho").value=b.dataset.a; calc();
+}));
+form.querySelectorAll(".quick button[data-manga]").forEach(b=>b.addEventListener("click",()=>{ $("manga-m").value=b.dataset.manga; calc(); }));
+$("contra-m2").addEventListener("input",()=>{ contraManual=true; });
+$("contra-igual").addEventListener("click",()=>{ contraManual=false; calc(); });
+$("p-contra").textContent = precioTxt(CONFIG.precios.contrapiso,"m²");
+$("p-manga").textContent = precioTxt(CONFIG.precios.manga,"metro");
+calc();
+
+document.querySelectorAll(".copy-btn[data-copy]").forEach(b=>b.addEventListener("click",()=>{
+  const el=document.getElementById(b.dataset.copy), t=el.textContent;
+  const done=()=>{b.textContent="Copiado";setTimeout(()=>b.textContent="Copiar",1500);};
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);};
+  try{navigator.clipboard.writeText(t).then(done,sel);}catch(e){sel();}
+}));
+</script>
+
+</body></html>
