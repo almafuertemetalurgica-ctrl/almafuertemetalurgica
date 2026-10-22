@@ -1,0 +1,3760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metalúrgica AlmaFuerte — Cotizador Interactivo 3D Isométrico + Logística Nacional</title>
+
+  <!-- Google Fonts: Big Shoulders Display, Barlow, IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style id="coreStyles">
+    :root {
+      /* Superficies Industriales (Modo Oscuro Deliberado) */
+      --bg: #17191b;         /* Grafito profundo — Fondo principal de página y lienzo 3D */
+      --bg-2: #1f2226;       /* Chapa oscura — Bandas secundarias, tarjetas inactivas e inputs */
+      --bg-3: #2a2e33;       /* Perfil estructural — Panel de salida de cotización y modales */
+      --line: #3a3f46;       /* Bordes técnicos, grillas y divisores punteados */
+
+      /* Texto y Jerarquía */
+      --fg: #eceae6;         /* Blanco cálido industrial — Títulos, valores y texto principal */
+      --muted: #a3a7ad;      /* Acero galvanizado — Etiquetas secundarias, subtítulos y notas */
+
+      /* Acentos de Interacción (Chispa de Soldadura) */
+      --spark: #ff7a1a;      /* Naranja chispa — Switches activos, sliders, bordes seleccionados y cotas 3D */
+      --spark-hi: #ffb066;   /* Ámbar incandescente — Números totales destacados, hover y estados focus */
+
+      /* Conversión / Acción Principal (WhatsApp) */
+      --wa: #25d366;         /* Verde WhatsApp — Botones de cierre de cotización y FAB flotante */
+      --wa-ink: #06301a;     /* Tinta oscura sobre botón de WhatsApp para máximo contraste */
+
+      /* Sistema Tipográfico */
+      --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+      --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--body);
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Utilidades Tipográficas */
+    .font-display {
+      font-family: var(--display);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .font-mono {
+      font-family: var(--mono);
+    }
+
+    /* Contenedor Principal Ampliado para Mayor Protagonismo del Visor en PC */
+    .wrap {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Top Header */
+    .site-header {
+      background: rgba(23, 25, 27, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      background: var(--bg-2);
+      border: 1.5px solid var(--spark);
+      display: grid;
+      place-items: center;
+      color: var(--spark);
+      box-shadow: 0 0 18px rgba(255, 122, 26, 0.2);
+      flex-shrink: 0;
+    }
+    .brand-title {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 1.45rem;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      color: var(--fg);
+    }
+    .brand-sub {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Botones de Moneda y Controles Secundarios */
+    .pill-switch {
+      display: inline-flex;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 2px;
+    }
+    .pill-switch button {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .pill-switch button.active {
+      background: var(--spark);
+      color: #1a0d02;
+      font-weight: 700;
+    }
+    .btn-ghost {
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 7px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--spark);
+      color: var(--spark-hi);
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--spark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    /* Layout Principal 2 Columnas en PC (58% Visor / 42% Controles) */
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.38fr) minmax(380px, 1fr);
+      gap: 24px;
+      padding: 18px 0 48px;
+      align-items: start;
+    }
+
+    /* Columna Izquierda: Lienzo 3D Sticky en PC */
+    .viewer-col {
+      position: sticky;
+      top: 76px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+    }
+
+    .canvas-card {
+      background: radial-gradient(circle at 50% 44%, rgba(255, 122, 26, 0.14), transparent 65%), var(--bg);
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .canvas-hud-top {
+      padding: 12px 14px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(23, 25, 27, 0.92) 0%, rgba(23, 25, 27, 0) 100%);
+    }
+    .hud-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .hud-badge {
+      background: rgba(23, 25, 27, 0.9);
+      border: 1px solid var(--line);
+      padding: 4px 9px;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--fg);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hud-badge.spark {
+      border-color: var(--spark);
+      color: var(--spark-hi);
+    }
+    .hud-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .hud-btn {
+      background: rgba(31, 34, 38, 0.95);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .hud-btn:hover, .hud-btn.active {
+      border-color: var(--spark);
+      color: var(--fg);
+    }
+
+    /* SVG Visor Isométrico Amplio en PC */
+    .iso-svg-wrap {
+      width: 100%;
+      height: clamp(460px, 60vh, 620px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 6px 6px;
+    }
+    #isoViewer {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Animación de ruta logística punteada */
+    .route-line {
+      stroke-dasharray: 8 8;
+      animation: dashRoute 1.2s linear infinite;
+    }
+    @keyframes dashRoute {
+      to {
+        stroke-dashoffset: -16;
+      }
+    }
+
+    /* Notificación Inteligente de Reglas de Negocio */
+    .rule-toast {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(31, 34, 38, 0.97);
+      border: 1.5px solid var(--spark);
+      border-left-width: 5px;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      z-index: 15;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    }
+    .rule-toast.show {
+      display: flex;
+    }
+    .rule-toast-text {
+      font-size: 0.78rem;
+      color: var(--fg);
+    }
+    .rule-toast-text strong {
+      color: var(--spark-hi);
+      font-family: var(--mono);
+    }
+
+    /* Barra Inferior de Cómputo Métrico en Vivo */
+    .bom-bar {
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    .bom-item {
+      border-right: 1px dashed var(--line);
+      padding-right: 6px;
+      min-width: 0;
+    }
+    .bom-item:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+    .bom-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .bom-val {
+      font-family: var(--display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--fg);
+      letter-spacing: 0.02em;
+    }
+    .bom-val.accent {
+      color: var(--spark-hi);
+    }
+
+    /* Columna Derecha: Panel de Control y Salida */
+    .controls-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    /* Tarjetas de Configuración */
+    .extra-card {
+      background: var(--bg-2);
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      transition: border-color 0.18s ease;
+    }
+    .extra-card.active-card {
+      border-color: var(--spark);
+    }
+    .extra-card.disabled-card {
+      opacity: 0.52;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .step-num {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--spark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .card-title {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--fg);
+      line-height: 1.1;
+    }
+    .card-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Interruptor Switch Industrial */
+    .switch-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .switch-input {
+      display: none;
+    }
+    .switch-track {
+      width: 46px;
+      height: 26px;
+      background: var(--bg-3);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .switch-thumb {
+      width: 20px;
+      height: 20px;
+      background: var(--muted);
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      transition: all 0.2s ease;
+    }
+    .switch-input:checked + .switch-track {
+      background: var(--spark);
+      border-color: var(--spark);
+    }
+    .switch-input:checked + .switch-track .switch-thumb {
+      background: #1a0d02;
+      transform: translateX(19px);
+    }
+
+    /* Botones rápidos (.quick) */
+    .quick {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0;
+    }
+    .quick button {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 7px 11px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .quick button:hover {
+      border-color: var(--muted);
+      color: var(--fg);
+    }
+    .quick button.active {
+      background: var(--spark);
+      border-color: var(--spark);
+      color: #1a0d02;
+      font-weight: 700;
+    }
+
+    /* Selectores tipo Pastilla / Tarjetas Internas */
+    .option-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .option-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .choice-btn {
+      background: var(--bg);
+      border: 1.5px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      text-align: left;
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-width: 0;
+    }
+    .choice-btn:hover {
+      border-color: #555c66;
+    }
+    .choice-btn.active {
+      border-color: var(--spark);
+      background: rgba(255, 122, 26, 0.09);
+    }
+    .choice-title {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .choice-meta {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--spark-hi);
+      margin-top: 2px;
+    }
+    .choice-desc {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+
+    /* Controles de Dimensionamiento Ancho × Largo con Slider y Stepper */
+    .dim-control-box {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .dim-control-box.custom-selected {
+      border-color: var(--spark);
+      background: linear-gradient(180deg, rgba(255, 122, 26, 0.08) 0%, var(--bg) 100%);
+    }
+    .dim-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .dim-label-title {
+      font-family: var(--mono);
+      font-size: 0.73rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .dim-stepper-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dim-step-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.15s ease;
+    }
+    .dim-step-btn:hover:not(:disabled) {
+      border-color: var(--spark);
+      color: var(--spark-hi);
+    }
+    .dim-step-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .dim-value-badge {
+      font-family: var(--display);
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--spark-hi);
+      min-width: 110px;
+      text-align: center;
+      line-height: 1;
+      padding: 4px 8px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+    .dim-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .dim-summary-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-3);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .custom-dim-alert {
+      display: none;
+      margin-top: 8px;
+      background: rgba(255, 122, 26, 0.12);
+      border: 1px solid var(--spark);
+      border-left-width: 4px;
+      border-radius: 6px;
+      padding: 9px 11px;
+      font-size: 0.78rem;
+      color: var(--fg);
+    }
+    .custom-dim-alert.show {
+      display: block;
+    }
+
+    /* Sliders Industriales Cómodos para Tocar */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      background: var(--bg-3);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      outline: none;
+      margin: 10px 0 6px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      background: var(--spark);
+      border: 2px solid #1a0d02;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 122, 26, 0.5);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      background: var(--spark);
+      border: 2px solid #1a0d02;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 122, 26, 0.5);
+    }
+
+    /* Módulo de Persianas por Fachada e Instancia */
+    .wall-occupation-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+    .wall-occ-pill {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 6px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .wall-occ-top {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: var(--muted);
+    }
+    .wall-occ-bar {
+      height: 5px;
+      background: var(--bg-3);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .wall-occ-fill {
+      height: 100%;
+      background: var(--spark);
+      transition: width 0.2s ease;
+    }
+
+    .shutter-adder-box {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 11px;
+      margin-bottom: 10px;
+    }
+    .shutter-adder-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+    .btn-add-shutter {
+      background: var(--spark);
+      color: #1a0d02;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 13px;
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: filter 0.15s;
+    }
+    .btn-add-shutter:hover {
+      filter: brightness(1.08);
+    }
+
+    .shutter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .shutter-item-card {
+      background: var(--bg);
+      border: 1px solid var(--spark);
+      border-radius: 6px;
+      padding: 9px 11px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn-remove-shutter {
+      background: rgba(255, 80, 80, 0.12);
+      border: 1px solid rgba(255, 90, 90, 0.4);
+      color: #ff9999;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 6px 9px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-remove-shutter:hover {
+      border-color: #ff5555;
+      color: #ffffff;
+    }
+
+    .qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+    .qty-stepper button {
+      background: transparent;
+      border: none;
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 1rem;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+    }
+    .qty-stepper button:hover {
+      color: var(--spark);
+    }
+    .qty-stepper span {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    select.industrial-select, input.industrial-input {
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      color: var(--fg);
+      font-family: var(--body);
+      font-size: 0.84rem;
+      padding: 8px 10px;
+      border-radius: 5px;
+      outline: none;
+      width: 100%;
+    }
+    select.industrial-select:focus, input.industrial-input:focus {
+      border-color: var(--spark);
+    }
+
+    /* Panel de Salida de Cotización (.calc-out en --bg-3) */
+    .calc-out {
+      background: var(--bg-3);
+      border: 2px solid var(--spark);
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+    .out-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px dashed var(--line);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .total-price-output {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: clamp(44px, 6.5vw, 72px);
+      line-height: 0.98;
+      color: var(--spark-hi);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+      margin: 4px 0 6px;
+      word-break: break-word;
+    }
+    .range-sub {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .breakdown-list {
+      margin: 14px 0;
+      border-top: 1px dashed var(--line);
+      border-bottom: 1px dashed var(--line);
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+    .breakdown-row .lbl {
+      color: var(--muted);
+    }
+    .breakdown-row .val {
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--fg);
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Botón de Cierre WhatsApp (.btn-wa) */
+    .btn-wa {
+      width: 100%;
+      background: var(--wa);
+      color: var(--wa-ink);
+      border: none;
+      border-radius: 7px;
+      padding: 14px 18px;
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.15s ease, filter 0.15s ease;
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.25);
+    }
+    .btn-wa:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    /* Pie de Página */
+    .site-footer {
+      border-top: 1px solid var(--line);
+      padding: 20px 0 100px;
+      text-align: center;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.74rem;
+    }
+    .admin-seal {
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    /* Footer Sticky Mobile */
+    .mobile-sticky-footer {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(23, 25, 27, 0.97);
+      backdrop-filter: blur(8px);
+      border-top: 1.5px solid var(--spark);
+      padding: 10px 14px;
+      z-index: 60;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* Interfaz Móvil Dedicada (Tablets y Celulares) */
+    @media (max-width: 980px) {
+      .wrap {
+        padding: 0 12px;
+      }
+      .main-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 12px 0 40px;
+      }
+      /* En celulares el visor permanece en flujo superior con tamaño proporcionado sin tapar controles */
+      .viewer-col {
+        position: relative;
+        top: 0;
+        z-index: 10;
+      }
+      .iso-svg-wrap {
+        height: clamp(240px, 36vh, 330px);
+      }
+      .bom-bar {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .bom-item:nth-child(3n) {
+        border-right: none;
+      }
+      .mobile-sticky-footer {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .brand-title {
+        font-size: 1.2rem;
+      }
+      .brand-sub {
+        font-size: 0.6rem;
+      }
+      .canvas-hud-top {
+        padding: 9px 10px 4px;
+        gap: 6px;
+      }
+      .hud-badge {
+        font-size: 0.64rem;
+        padding: 3px 7px;
+      }
+      .hud-btn {
+        font-size: 0.66rem;
+        padding: 5px 8px;
+      }
+      .iso-svg-wrap {
+        height: 250px;
+      }
+      .bom-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .bom-item {
+        border-right: none;
+        background: var(--bg);
+        padding: 6px 8px;
+        border-radius: 5px;
+        border: 1px solid var(--line);
+      }
+      .option-grid-2, .option-grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .wall-occupation-grid {
+        grid-template-columns: 1fr;
+      }
+      .shutter-adder-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn-add-shutter {
+        width: 100%;
+        padding: 11px;
+      }
+      .shutter-item-card {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .dim-value-badge {
+        font-size: 1.45rem;
+        min-width: 96px;
+      }
+      .extra-card {
+        padding: 13px;
+      }
+      .btn-wa {
+        font-size: 1.15rem;
+        padding: 13px 14px;
+      }
+    }
+  </style>
+
+  <style id="adminOnlyStyles" data-admin-only="true">
+    .admin-seal {
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .admin-seal:hover {
+      color: var(--spark-hi);
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 12, 14, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--bg-3);
+      border: 1.5px solid var(--spark);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 960px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    }
+    .modal-head {
+      background: var(--bg-2);
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-body {
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .modal-foot {
+      background: var(--bg-2);
+      padding: 12px 18px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .admin-box {
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 12px;
+    }
+    .admin-box h4 {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      color: var(--spark-hi);
+      margin-bottom: 8px;
+      border-bottom: 1px dashed var(--line);
+      padding-bottom: 4px;
+    }
+    .admin-field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+    }
+    .admin-field input[type="number"], .admin-field input[type="text"] {
+      width: 95px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      padding: 4px 7px;
+      border-radius: 4px;
+      text-align: right;
+    }
+    .btn-export-public {
+      background: var(--spark);
+      color: #1a0d02;
+      border: 1.5px solid var(--spark-hi);
+      border-radius: 7px;
+      padding: 10px 18px;
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s ease, filter 0.15s ease;
+      box-shadow: 0 6px 20px rgba(255, 122, 26, 0.35);
+    }
+    .btn-export-public:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CABECERA PRINCIPAL -->
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <div class="brand-mark" title="Metalúrgica AlmaFuerte">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">METALÚRGICA ALMAFUERTE</div>
+          <div class="brand-sub">Planta Industrial Darregueira (Bs. As.) · Cotizador 3D Isométrico</div>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="pill-switch" role="group" aria-label="Selector de Moneda">
+          <button type="button" id="btnCurrUSD" class="active" onclick="setCurrency('USD')">USD</button>
+          <button type="button" id="btnCurrARS" onclick="setCurrency('ARS')">ARS ($)</button>
+        </div>
+        <button type="button" class="btn-ghost" id="btnOpenAdminHeader" data-admin-only="true" onclick="openAdminModal()">
+          <span>⚙</span> Modo Admin
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- LAYOUT PRINCIPAL DIRECTO (Visor 3D Isométrico + Configurador) -->
+    <main class="main-grid">
+
+      <!-- COLUMNA IZQUIERDA: VISOR 3D ISOMÉTRICO + CÓMPUTO MÉTRICO -->
+      <div class="viewer-col">
+        <div class="canvas-card">
+          <!-- HUD Superior del Visor 3D -->
+          <div class="canvas-hud-top">
+            <div class="hud-badges">
+              <span class="hud-badge spark" id="hudStructureBadge">GALPÓN CERRADO · 250 m²</span>
+              <span class="hud-badge" id="hudSlabBadge">HORMIGÓN 10 CM · MALLA SIMPLE</span>
+              <span class="hud-badge" id="hudFreightBadge">FLETE: DARREGUEIRA → BAHÍA BLANCA</span>
+            </div>
+            <div class="hud-actions">
+              <button type="button" class="hud-btn" id="btnRoofStyle" onclick="toggleRoofStyle()">Techo: 2 Aguas</button>
+              <button type="button" class="hud-btn active" id="btnCutaway" onclick="toggleCutaway()">Corte 3D: ON</button>
+            </div>
+          </div>
+
+          <!-- Lienzo SVG Isométrico -->
+          <div class="iso-svg-wrap">
+            <svg id="isoViewer" viewBox="0 0 820 500" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+
+          <!-- Aviso de Validación Inteligente -->
+          <div class="rule-toast" id="ruleToast">
+            <div class="rule-toast-text" id="ruleToastMsg">
+              <strong>AJUSTE TÉCNICO AUTOMÁTICO:</strong> Altura adaptada al portón seleccionado.
+            </div>
+            <button type="button" class="hud-btn" onclick="hideRuleToast()">OK</button>
+          </div>
+        </div>
+
+        <!-- Barra Inferior de Cómputo Métrico en Vivo -->
+        <div class="bom-bar">
+          <div class="bom-item">
+            <span class="bom-label">SUP. CUBIERTA</span>
+            <span class="bom-val accent" id="bomM2">250 m²</span>
+          </div>
+          <div class="bom-item">
+            <span class="bom-label">PÓRTICOS (C/5M)</span>
+            <span class="bom-val" id="bomPorticos">6 Uds.</span>
+          </div>
+          <div class="bom-item">
+            <span class="bom-label">CAMPANAS LED</span>
+            <span class="bom-val" id="bomLeds">10 Uds.</span>
+          </div>
+          <div class="bom-item">
+            <span class="bom-label">VOL. HORMIGÓN</span>
+            <span class="bom-val" id="bomConcrete">26.3 m³</span>
+          </div>
+          <div class="bom-item">
+            <span class="bom-label">MALLAS SIMA</span>
+            <span class="bom-val" id="bomMesh">20 Uds.</span>
+          </div>
+          <div class="bom-item">
+            <span class="bom-label">FLETE CAMIONES</span>
+            <span class="bom-val accent" id="bomTrucks">1 Viaje</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA: CONFIGURADOR PASO A PASO + SALIDA -->
+      <div class="controls-col">
+
+        <!-- PASO 1: ESTRUCTURA BASE (TINGLADO VS GALPÓN + ANCHO × LARGO) -->
+        <section class="extra-card active-card">
+          <div class="card-head">
+            <div>
+              <span class="step-num">MÓDULO 01 · ESTRUCTURA METÁLICA MODULAR</span>
+              <h2 class="card-title">TIPOLOGÍA Y DIMENSIONES (ANCHO × LARGO)</h2>
+            </div>
+            <span id="scaleDiscountBadge" class="hud-badge spark" style="display:none;">BONIFICACIÓN ESCALA</span>
+          </div>
+
+          <!-- Selector Tinglado vs Galpón -->
+          <div class="option-grid-2" style="margin-bottom: 14px;">
+            <button type="button" class="choice-btn" id="btnTypeTinglado" onclick="setStructureType('tinglado')">
+              <div class="choice-title">
+                <span>TINGLADO (ABIERTO)</span>
+                <span class="font-mono" style="font-size:0.75rem;color:var(--spark-hi);" id="lblRateTinglado">USD 80/m²</span>
+              </div>
+              <p class="choice-desc">Columnas reticuladas + cabreadas + cubierta trapezoidal sin cerramiento lateral.</p>
+            </button>
+
+            <button type="button" class="choice-btn active" id="btnTypeGalpon" onclick="setStructureType('galpon')">
+              <div class="choice-title">
+                <span>GALPÓN CERRADO</span>
+                <span class="font-mono" style="font-size:0.75rem;color:var(--spark-hi);" id="lblRateGalpon">USD 110/m²</span>
+              </div>
+              <p class="choice-desc">Estructura completa + cerramiento perimetral de chapa acanalada y zinguería.</p>
+            </button>
+          </div>
+
+          <!-- Control 1: Ancho de la Estructura (Luz libre transversal) -->
+          <div class="dim-control-box" id="boxDimWidth">
+            <div class="dim-head">
+              <div>
+                <div class="dim-label-title">ANCHO DE ESTRUCTURA (LUZ LIBRE SIN COLUMNAS)</div>
+                <div style="font-size:0.73rem; color:var(--muted);">Opciones estándar: 8 m a 25 m + Personalizado</div>
+              </div>
+              <div class="dim-stepper-group">
+                <button type="button" class="dim-step-btn" id="btnWidthMinus" onclick="stepWidth(-1)" aria-label="Disminuir ancho">−</button>
+                <div class="dim-value-badge" id="lblWidthVal">10 m</div>
+                <button type="button" class="dim-step-btn" id="btnWidthPlus" onclick="stepWidth(1)" aria-label="Aumentar ancho">+</button>
+              </div>
+            </div>
+            <input type="range" id="sliderWidthIndex" min="0" max="6" step="1" value="1" oninput="onWidthSliderInput(this.value)" />
+            <div class="dim-ticks">
+              <span>8m</span>
+              <span>10m</span>
+              <span>12m</span>
+              <span>15m</span>
+              <span>20m</span>
+              <span>25m</span>
+              <span style="color:var(--spark-hi);">Pers.</span>
+            </div>
+          </div>
+
+          <!-- Control 2: Largo de la Estructura (Módulos longitudinales cada 5 m) -->
+          <div class="dim-control-box" id="boxDimLength">
+            <div class="dim-head">
+              <div>
+                <div class="dim-label-title">LARGO DE ESTRUCTURA (MODULACIÓN CADA 5 M)</div>
+                <div style="font-size:0.73rem; color:var(--muted);">Opciones estándar: 10 m a 60 m + Personalizado</div>
+              </div>
+              <div class="dim-stepper-group">
+                <button type="button" class="dim-step-btn" id="btnLengthMinus" onclick="stepLength(-1)" aria-label="Disminuir largo">−</button>
+                <div class="dim-value-badge" id="lblLengthVal">25 m</div>
+                <button type="button" class="dim-step-btn" id="btnLengthPlus" onclick="stepLength(1)" aria-label="Aumentar largo">+</button>
+              </div>
+            </div>
+            <input type="range" id="sliderLengthIndex" min="0" max="9" step="1" value="3" oninput="onLengthSliderInput(this.value)" />
+            <div class="dim-ticks">
+              <span>10m</span>
+              <span>20m</span>
+              <span>30m</span>
+              <span>40m</span>
+              <span>50m</span>
+              <span>60m</span>
+              <span style="color:var(--spark-hi);">Pers.</span>
+            </div>
+          </div>
+
+          <!-- Cinta de Superficie Resultante Calculada -->
+          <div class="dim-summary-strip">
+            <span class="font-mono" style="font-size:0.72rem; color:var(--muted);">SUPERFICIE CUBIERTA RESULTANTE:</span>
+            <span class="font-display" style="font-size:1.5rem; font-weight:900; color:var(--spark-hi);" id="lblResultingM2">250 m² (10m × 25m)</span>
+          </div>
+
+          <!-- Aviso de Dimensión Personalizada -->
+          <div class="custom-dim-alert" id="customDimAlert"></div>
+
+          <!-- Selector de Altura Libre de Columna -->
+          <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--line);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span class="font-mono" style="font-size:0.72rem; color:var(--muted);">ALTURA LIBRE DE COLUMNA ESTÁNDAR:</span>
+              <span class="font-mono" style="font-size:0.75rem; color:var(--spark-hi);" id="lblHeightSelected">5.5 m</span>
+            </div>
+            <div class="option-grid-3">
+              <button type="button" class="choice-btn" id="btnHeight45" onclick="setColumnHeight(4.5)">
+                <div class="choice-title"><span>4.5 m</span></div>
+                <div class="choice-meta">Base (0%)</div>
+                <p class="choice-desc">Estándar liviano / utilitarios</p>
+              </button>
+              <button type="button" class="choice-btn active" id="btnHeight55" onclick="setColumnHeight(5.5)">
+                <div class="choice-title"><span>5.5 m</span></div>
+                <div class="choice-meta">Industrial (+6%/+8%)</div>
+                <p class="choice-desc">Camiones / autoelevadores</p>
+              </button>
+              <button type="button" class="choice-btn" id="btnHeight70" onclick="setColumnHeight(7.0)">
+                <div class="choice-title"><span>7.0 m</span></div>
+                <div class="choice-meta">Gran Altura (+14%/+18%)</div>
+                <p class="choice-desc">Bateas / puente grúa</p>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- EXTRA 1: LUMINARIA INDUSTRIAL LED (Disponible en Tinglado y Galpón) -->
+        <section class="extra-card active-card" id="cardLuminaria">
+          <div class="card-head">
+            <div>
+              <span class="step-num">EXTRA 01 · ILUMINACIÓN COLGANTE</span>
+              <h3 class="card-title">LUMINARIA INDUSTRIAL LED</h3>
+              <p class="card-sub">Campanas LED suspendidas de cabreadas con cálculo fotométrico automático y representación 3D exacta.</p>
+            </div>
+            <label class="switch-wrap">
+              <input type="checkbox" class="switch-input" id="chkLuminaria" checked onchange="toggleLuminaria(this.checked)" />
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+
+          <div id="bodyLuminaria">
+            <div class="option-grid-2" style="margin-bottom:10px;">
+              <button type="button" class="choice-btn" id="btnLed36" onclick="setLedLevel('estandar_36m2')">
+                <div class="choice-title"><span>DEPÓSITO (150W)</span></div>
+                <div class="choice-meta">1 c/ 36 m² (~150 lux)</div>
+                <p class="choice-desc">Guarda de maquinaria, acopio y circulación general.</p>
+              </button>
+              <button type="button" class="choice-btn active" id="btnLed25" onclick="setLedLevel('taller_25m2')">
+                <div class="choice-title"><span>TALLER (200W)</span></div>
+                <div class="choice-meta">1 c/ 25 m² (~300 lux)</div>
+                <p class="choice-desc">Mecánica, herrería, armado y trabajo de precisión.</p>
+              </button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding:8px 12px; border-radius:6px; border:1px solid var(--line); gap:8px; flex-wrap:wrap;">
+              <div>
+                <span class="font-mono" style="font-size:0.72rem; color:var(--muted);">DOTACIÓN DE CAMPANAS LED:</span>
+                <div style="font-size:0.75rem; color:var(--spark-hi);" id="lblLedUnitCost">USD 185 c/u instalada</div>
+              </div>
+              <div class="qty-stepper">
+                <button type="button" onclick="adjustLedCount(-1)" aria-label="Menos luminarias">−</button>
+                <span id="lblLedQty">10</span>
+                <button type="button" onclick="adjustLedCount(1)" aria-label="Más luminarias">+</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- AVISO DE EXCLUSIÓN EN MODO TINGLADO -->
+        <div id="tingladoNotice" class="extra-card" style="display:none; border-color:var(--spark); background:rgba(255,122,26,0.08);">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div>
+              <span class="step-num">MODO TINGLADO SIN CERRAMIENTO</span>
+              <div style="font-size:0.84rem; color:var(--fg);">Instalación eléctrica por fases, piso de hormigón y persianas aplican a <strong>Galpón Cerrado</strong>.</div>
+            </div>
+            <button type="button" class="btn-ghost" style="border-color:var(--spark); color:var(--spark-hi);" onclick="setStructureType('galpon')">
+              Pasar a Galpón Cerrado →
+            </button>
+          </div>
+        </div>
+
+        <!-- EXTRA 2: INSTALACIÓN ELÉCTRICA POR FASES (Exclusivo Galpón) -->
+        <section class="extra-card active-card" id="cardElectricidad">
+          <div class="card-head">
+            <div>
+              <span class="step-num">EXTRA 02 · ENERGÍA Y BANDEJAS PORTACABLES</span>
+              <h3 class="card-title">INSTALACIÓN ELÉCTRICA REGLAMENTARIA</h3>
+              <p class="card-sub">Tablero principal con térmicas/disyuntor, jabalina, cañería galvanizada y tomas cada 10m.</p>
+            </div>
+            <label class="switch-wrap">
+              <input type="checkbox" class="switch-input" id="chkElectricidad" checked onchange="toggleElectricidad(this.checked)" />
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+
+          <div id="bodyElectricidad" class="option-grid-3">
+            <button type="button" class="choice-btn" id="btnPhaseMono" onclick="setElectricPhase('monofasica')">
+              <div class="choice-title"><span>MONOFÁSICO</span></div>
+              <div class="choice-meta">220V (Hasta 10 kW)</div>
+              <p class="choice-desc">Iluminación, oficinas, portón y herramientas de mano.</p>
+            </button>
+            <button type="button" class="choice-btn" id="btnPhaseBi" onclick="setElectricPhase('bifasica')">
+              <div class="choice-title"><span>BIFÁSICO RURAL</span></div>
+              <div class="choice-meta">2×220V / 380V</div>
+              <p class="choice-desc">Zonas rurales/semi-urbanas, bombas y equipo medio.</p>
+            </button>
+            <button type="button" class="choice-btn active" id="btnPhaseTri" onclick="setElectricPhase('trifasica')">
+              <div class="choice-title"><span>TRIFÁSICO IND.</span></div>
+              <div class="choice-meta">380V + Neutro (>15kW)</div>
+              <p class="choice-desc">Compresores, soldadoras industriales, tornos y grúas.</p>
+            </button>
+          </div>
+        </section>
+
+        <!-- EXTRA 3: HORMIGONADO / PISO INDUSTRIAL (Exclusivo Galpón) -->
+        <section class="extra-card active-card" id="cardHormigon">
+          <div class="card-head">
+            <div>
+              <span class="step-num">EXTRA 03 · PLATEA Y PLAYÓN LLANEADO MECÁNICO</span>
+              <h3 class="card-title">PISO DE HORMIGÓN INDUSTRIAL</h3>
+              <p class="card-sub">Hormigón elaborado H21/H25/H30 con armadura de acero SIMA 15×15 cm.</p>
+            </div>
+            <label class="switch-wrap">
+              <input type="checkbox" class="switch-input" id="chkHormigon" checked onchange="toggleHormigon(this.checked)" />
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+
+          <div id="bodyHormigon">
+            <div class="option-grid-2" style="margin-bottom:10px;">
+              <button type="button" class="choice-btn active" id="btnSlab10" onclick="setSlabThickness('10cm')">
+                <div class="choice-title"><span>10 CM · MALLA SIMPLE</span></div>
+                <div class="choice-meta" id="lblRateSlab10">H21 Ø6mm · USD 34/m²</div>
+                <p class="choice-desc">Taller mecánico, herrería, autos y utilitarios (2.5 tn/eje).</p>
+              </button>
+              <button type="button" class="choice-btn" id="btnSlab12" onclick="setSlabThickness('12cm')">
+                <div class="choice-title"><span>12 CM · MALLA Ø8MM</span></div>
+                <div class="choice-meta" id="lblRateSlab12">H21 Llaneado · USD 41/m²</div>
+                <p class="choice-desc">Depósito comercial, utilitarios cargados y racks livianos.</p>
+              </button>
+              <button type="button" class="choice-btn" id="btnSlab15" onclick="setSlabThickness('15cm')">
+                <div class="choice-title"><span>15 CM · REFORZADA</span></div>
+                <div class="choice-meta" id="lblRateSlab15">H25 Ø8/10mm · USD 52/m²</div>
+                <p class="choice-desc">Autoelevadores (sampis 2.5 a 4 tn) y camiones chasis.</p>
+              </button>
+              <button type="button" class="choice-btn" id="btnSlab20" onclick="setSlabThickness('20cm')">
+                <div class="choice-title"><span>20 CM · DOBLE MALLA</span></div>
+                <div class="choice-meta" id="lblRateSlab20">H30 Vial · USD 68/m²</div>
+                <p class="choice-desc">Semirremolques, bateas 45 tn y bases petroleras.</p>
+              </button>
+            </div>
+
+            <!-- Opción igualar m2 al techo o agregar playón exterior -->
+            <div style="background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <label style="font-size:0.78rem; color:var(--muted); display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="checkbox" id="chkSyncSlabM2" checked onchange="toggleCustomSlabM2(this.checked)" />
+                  Igualar superficie a los m² del galpón (<span id="lblSlabSyncM2" class="font-mono">250 m²</span>)
+                </label>
+                <div id="customSlabInputWrap" style="display:none; align-items:center; gap:6px;">
+                  <span class="font-mono" style="font-size:0.72rem; color:var(--spark-hi);">M² Totales (Piso + Playón):</span>
+                  <input type="number" id="inpCustomSlabM2" class="industrial-input" style="width:95px;" min="50" max="5000" step="10" value="250" oninput="onCustomSlabM2Input(this.value)" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- EXTRA 4: PERSIANAS ELÉCTRICAS ENROLLABLES CON UBICACIÓN POR FACHADA Y VALIDACIÓN DE PARED -->
+        <section class="extra-card active-card" id="cardPersianas">
+          <div class="card-head">
+            <div>
+              <span class="step-num">EXTRA 04 · ACCESOS VEHICULARES MOTORIZADOS</span>
+              <h3 class="card-title">PERSIANAS METÁLICAS ENROLLABLES</h3>
+              <p class="card-sub">Seleccioná medida y fachada para cada persiana. Distribución automática con control de espacio útil por pared.</p>
+            </div>
+            <label class="switch-wrap">
+              <input type="checkbox" class="switch-input" id="chkPersianas" checked onchange="togglePersianas(this.checked)" />
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+
+          <div id="bodyPersianas">
+            <!-- Indicador de ocupación lineal de las 4 fachadas -->
+            <div class="font-mono" style="font-size:0.68rem; color:var(--muted); margin-bottom:6px;">
+              ESPACIO OCUPADO POR FACHADA (MÁRGENES ESQUINEROS 0.60M · SEPARACIÓN MÍN. 0.50M):
+            </div>
+            <div class="wall-occupation-grid" id="wallOccupationGrid"></div>
+
+            <!-- Constructor para agregar una nueva persiana -->
+            <div class="shutter-adder-box">
+              <div class="font-mono" style="font-size:0.68rem; color:var(--spark-hi); margin-bottom:6px;">
+                + AGREGAR PERSIANA MOTORIZADA AL GALPÓN:
+              </div>
+              <div class="shutter-adder-grid">
+                <div>
+                  <label class="font-mono" style="font-size:0.65rem; color:var(--muted); display:block; margin-bottom:3px;">TIPO Y MEDIDA DE PERSIANA</label>
+                  <select id="selNewShutterType" class="industrial-select">
+                    <option value="porton_35x35">Estándar Taller (3.50 × 3.50 m)</option>
+                    <option value="porton_45x45">Estándar Industrial (4.50 × 4.50 m)</option>
+                    <option value="porton_50x50">Gran Porte / Petrolero (5.00 × 5.00 m)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="font-mono" style="font-size:0.65rem; color:var(--muted); display:block; margin-bottom:3px;">UBICACIÓN (FACHADA)</label>
+                  <select id="selNewShutterWall" class="industrial-select">
+                    <option value="frente">Frente</option>
+                    <option value="fondo">Fondo</option>
+                    <option value="lateral_izq">Lateral izquierdo</option>
+                    <option value="lateral_der">Lateral derecho</option>
+                  </select>
+                </div>
+                <button type="button" class="btn-add-shutter" onclick="addShutterFromUI()">+ Agregar</button>
+              </div>
+            </div>
+
+            <!-- Lista de persianas instaladas individualmente configurables -->
+            <div class="shutter-list" id="shutterInstancesList"></div>
+          </div>
+        </section>
+
+        <!-- MÓDULO 5: LOGÍSTICA CON CAMIONES CON ACOPLADO DESDE DARREGUEIRA -->
+        <section class="extra-card active-card" id="cardFlete">
+          <div class="card-head">
+            <div>
+              <span class="step-num">MÓDULO 05 · FLOTA PROPIA ALMAFUERTE</span>
+              <h3 class="card-title">LOGÍSTICA NACIONAL DESDE DARREGUEIRA (BS. AS.)</h3>
+              <p class="card-sub">Salida desde Planta Darregueira hacia todo el país.</p>
+            </div>
+            <label class="switch-wrap">
+              <input type="checkbox" class="switch-input" id="chkFlete" checked onchange="toggleFlete(this.checked)" />
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+
+          <div id="bodyFlete">
+            <span class="font-mono" style="font-size:0.68rem; color:var(--muted);">DESTINOS FRECUENTES (1 CLIC):</span>
+            <div class="quick" id="quickFreightBtns">
+              <button type="button" onclick="selectFreightPreset('Darregueira / Guatraché', 25)">Darregueira / Guatraché (25 km)</button>
+              <button type="button" onclick="selectFreightPreset('Santa Rosa (LP)', 115)">Santa Rosa (115 km)</button>
+              <button type="button" class="active" onclick="selectFreightPreset('Bahía Blanca', 175)">Bahía Blanca (175 km)</button>
+              <button type="button" onclick="selectFreightPreset('Neuquén Capital', 530)">Neuquén Capital (530 km)</button>
+              <button type="button" onclick="selectFreightPreset('Añelo / Vaca Muerta', 610)">Añelo / Vaca Muerta (610 km)</button>
+              <button type="button" onclick="selectFreightPreset('Cutral Có / Zapala', 640)">Cutral Có / Zapala (640 km)</button>
+              <button type="button" onclick="selectFreightPreset('CABA / GBA', 615)">CABA / GBA (615 km)</button>
+            </div>
+
+            <div class="option-grid-2" style="margin-top:10px;">
+              <div>
+                <label class="font-mono" style="font-size:0.68rem; color:var(--muted); display:block; margin-bottom:4px;">LOCALIDAD / DESTINO DE OBRA</label>
+                <select id="selFreightCity" class="industrial-select" style="width:100%;" onchange="onFreightDropdownChange(this.value)"></select>
+              </div>
+              <div>
+                <label class="font-mono" style="font-size:0.68rem; color:var(--muted); display:block; margin-bottom:4px;">DISTANCIA DESDE DARREGUEIRA</label>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <input type="number" id="inpDistanciaKm" class="industrial-input font-mono" style="width:100%;" min="0" max="2500" value="175" oninput="onDistanceKmInput(this.value)" />
+                  <span class="font-mono" style="font-size:0.8rem; color:var(--spark-hi);">KM</span>
+                </div>
+              </div>
+            </div>
+
+            <input type="range" id="sliderDistanciaKm" min="0" max="2500" step="5" value="175" oninput="onDistanceKmInput(this.value)" />
+
+            <div style="background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:9px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <div class="font-mono" style="font-size:0.72rem; color:var(--muted);" id="lblFreightRingInfo">
+                ZONA 1 REGIONAL (61 a 250 km) · 1 Camión con acoplado
+              </div>
+              <div class="font-mono" style="font-size:0.8rem; font-weight:700; color:var(--spark-hi);" id="lblFreightSubtotal">
+                USD 518
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOQUE DE SALIDA DE COTIZACIÓN (.calc-out) -->
+        <section class="calc-out">
+          <div class="out-header">
+            <div>
+              <span class="eyebrow" style="margin-bottom:2px;">RESUMEN DE INVERSIÓN ESTIMADA</span>
+              <div style="font-size:0.78rem; color:var(--muted);" id="lblSummarySpec">Galpón 250 m² (10×25×5.5m) · 6 Pórticos</div>
+            </div>
+            <span class="hud-badge spark" id="lblActiveModeTag">CONFIGURACIÓN A MEDIDA</span>
+          </div>
+
+          <div id="publicPriceBlock">
+            <div class="font-mono" style="font-size:0.72rem; color:var(--muted); text-transform:uppercase;">INVERSIÓN TOTAL LLAVE EN MANO ESTIMADA</div>
+            <div class="total-price-output" id="outTotalMain">USD 46.643</div>
+            <div class="range-sub" id="outRangeSub">Rango estimado (±10%): USD 41.979 – USD 51.307</div>
+          </div>
+
+          <!-- Desglose Técnico por Rubro -->
+          <div class="breakdown-list">
+            <div class="breakdown-row">
+              <span class="lbl" id="brkLblEstructura">1. Estructura Metálica (250 m²)</span>
+              <span class="val" id="brkValEstructura">USD 29.700</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="lbl" id="brkLblLuminaria">2. Luminaria Industrial LED (10 Uds.)</span>
+              <span class="val" id="brkValLuminaria">USD 1.850</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="lbl" id="brkLblElectricidad">3. Instalación Eléctrica (Trifásica 380V)</span>
+              <span class="val" id="brkValElectricidad">USD 3.975</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="lbl" id="brkLblHormigon">4. Piso de Hormigón (10 cm · 26.3 m³)</span>
+              <span class="val" id="brkValHormigon">USD 8.500</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="lbl" id="brkLblPersianas">5. Persianas Motorizadas (1x 3.5×3.5m)</span>
+              <span class="val" id="brkValPersianas">USD 2.100</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="lbl" id="brkLblFlete">6. Flete Camión Propio (Bahía Blanca · 175 km)</span>
+              <span class="val" id="brkValFlete">USD 518</span>
+            </div>
+          </div>
+
+          <!-- Input rápido de Nombre/Localidad y Botón WhatsApp -->
+          <div style="margin-bottom:10px;">
+            <input type="text" id="inpClientLocation" class="industrial-input" style="width:100%;" placeholder="Tu Nombre / Empresa o comentario adicional (opcional)" />
+          </div>
+
+          <button type="button" class="btn-wa" onclick="sendWhatsAppQuote()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+            </svg>
+            RECIBIR PRESUPUESTO OFICIAL POR WHATSAPP
+          </button>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- PIE DE PÁGINA (Sin coordenadas visibles) -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <span class="admin-seal" id="footerAdminSeal">
+        AlmaFuerte · Metalúrgica · Darregueira
+      </span>
+      <span> — Salida desde Planta Darregueira (Bs. As.) · Envíos con Flota Propia a todo el País</span>
+    </div>
+  </footer>
+
+  <!-- BARRA INFERIOR STICKY PARA MOBILE -->
+  <div class="mobile-sticky-footer">
+    <div>
+      <div class="font-mono" style="font-size:0.62rem; color:var(--muted);">INVERSIÓN ESTIMADA</div>
+      <div class="font-display" style="font-size:1.55rem; font-weight:900; color:var(--spark-hi); line-height:1;" id="outMobileTotal">USD 46.643</div>
+    </div>
+    <button type="button" class="btn-wa" style="width:auto; padding:10px 14px; font-size:1.05rem;" onclick="sendWhatsAppQuote()">
+      Pedir cotización WhatsApp
+    </button>
+  </div>
+
+  <!-- MODAL PANEL DE ADMINISTRACIÓN (/admin) -->
+  <div class="modal-backdrop" id="adminModal" data-admin-only="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow" style="margin-bottom:0;">MODO EDICIÓN · PANEL DE ADMINISTRADOR PRIVADO</span>
+          <h3 class="font-display" style="font-size:1.4rem;">MATRIZ MAESTRA DE PRECIOS Y EXPORTACIÓN WEB ALMAFUERTE</h3>
+        </div>
+        <button type="button" class="btn-ghost" onclick="closeAdminModal()">✕ Cerrar</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Barra de Ajuste Masivo % y Moneda -->
+        <div class="admin-box" style="border-color:var(--spark); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div class="font-mono" style="font-size:0.72rem; color:var(--spark-hi);">AJUSTE MASIVO PORCENTUAL (%)</div>
+            <div style="font-size:0.76rem; color:var(--muted);">Aplica un incremento o descuento directo sobre todas las tarifas en USD del formulario.</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="number" id="inpMassPercent" class="industrial-input font-mono" style="width:85px;" placeholder="+5%" value="5" />
+            <button type="button" class="btn-ghost" style="border-color:var(--spark); color:var(--spark-hi);" onclick="applyMassPercentage()">
+              Aplicar % a toda la lista
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <!-- 1. Parámetros Generales y Estructura -->
+          <div class="admin-box">
+            <h4>1. ESTRUCTURA BASE Y PARÁMETROS</h4>
+            <div class="admin-field">
+              <span>WhatsApp Comercial:</span>
+              <input type="text" id="adm_whatsapp" style="width:130px;" />
+            </div>
+            <div class="admin-field">
+              <span>Tipo de Cambio ARS/USD:</span>
+              <input type="number" id="adm_tc" step="10" />
+            </div>
+            <div class="admin-field">
+              <span>Tinglado Abierto (USD/m²):</span>
+              <input type="number" id="adm_tinglado_m2" />
+            </div>
+            <div class="admin-field">
+              <span>Galpón Cerrado (USD/m²):</span>
+              <input type="number" id="adm_galpon_m2" />
+            </div>
+            <div class="admin-field">
+              <span>Recargo Alt. 5.5m Ting./Galp. (%):</span>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="adm_rec55_ting" style="width:52px;" step="0.5" title="Recargo 5.5m Tinglado (%)" />
+                <input type="number" id="adm_rec55_galp" style="width:52px;" step="0.5" title="Recargo 5.5m Galpón (%)" />
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Recargo Alt. 7.0m Ting./Galp. (%):</span>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="adm_rec70_ting" style="width:52px;" step="0.5" title="Recargo 7.0m Tinglado (%)" />
+                <input type="number" id="adm_rec70_galp" style="width:52px;" step="0.5" title="Recargo 7.0m Galpón (%)" />
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Desc. Escala 500m² / 1000m² (%):</span>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="adm_desc500" style="width:52px;" step="0.5" title="Descuento >= 500 m² (%)" />
+                <input type="number" id="adm_desc1000" style="width:52px;" step="0.5" title="Descuento >= 1000 m² (%)" />
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Margen Rango Operativo (±%):</span>
+              <input type="number" id="adm_margen_rango" step="0.5" />
+            </div>
+            <div class="admin-field">
+              <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="checkbox" id="adm_hide_total" />
+                Ocultar Precio Total al Público ("A confirmar")
+              </label>
+            </div>
+          </div>
+
+          <!-- 2. Luminarias y Electricidad (con opción "A confirmar") -->
+          <div class="admin-box">
+            <h4>2. LUMINARIA LED Y ELECTRICIDAD</h4>
+            <div class="admin-field">
+              <span>Campana LED 150W (36m²):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_led150" />
+                <label title="Marcar como A confirmar" style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_led150" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Campana LED 200W (25m²):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_led200" />
+                <label title="Marcar como A confirmar" style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_led200" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Kit Monofásico (Fijo USD):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_elec_mono" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_elec_mono" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Tendido Monofásico (USD/m²):</span>
+              <input type="number" id="adm_elec_mono_m2" step="0.5" />
+            </div>
+            <div class="admin-field">
+              <span>Kit Bifásico (Fijo USD):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_elec_bi" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_elec_bi" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Tendido Bifásico (USD/m²):</span>
+              <input type="number" id="adm_elec_bi_m2" step="0.5" />
+            </div>
+            <div class="admin-field">
+              <span>Kit Trifásico (Fijo USD):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_elec_tri" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_elec_tri" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Tendido Trifásico (USD/m²):</span>
+              <input type="number" id="adm_elec_tri_m2" step="0.5" />
+            </div>
+          </div>
+
+          <!-- 3. Hormigonado (USD/m² o "A confirmar") -->
+          <div class="admin-box">
+            <h4>3. HORMIGONADO (USD/M²)</h4>
+            <div class="admin-field">
+              <span>Piso 10 cm (Malla Ø6mm):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_slab10" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_slab10" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Piso 12 cm (Malla Ø8mm):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_slab12" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_slab12" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Piso 15 cm (Reforzada H25):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_slab15" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_slab15" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Piso 20 cm (Doble Malla H30):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_slab20" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_slab20" /> A conf.</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Persianas y Logística Darregueira -->
+          <div class="admin-box">
+            <h4>4. PERSIANAS Y LOGÍSTICA</h4>
+            <div class="admin-field">
+              <span>Portón 3.5×3.5m (USD):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_porton35" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_porton35" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Portón 4.5×4.5m (USD):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_porton45" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_porton45" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Portón 5.0×5.0m (USD):</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <input type="number" id="adm_porton50" />
+                <label style="font-size:0.65rem; color:var(--muted);"><input type="checkbox" id="null_porton50" /> A conf.</label>
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Cap. Camión+Acoplado Ting./Galp. (m²):</span>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="adm_cap_ting" style="width:52px;" step="50" title="Capacidad m² por camión Tinglado" />
+                <input type="number" id="adm_cap_galp" style="width:52px;" step="50" title="Capacidad m² por camión Galpón" />
+              </div>
+            </div>
+            <div class="admin-field">
+              <span>Cargo Fijo Zona Local (0-60km):</span>
+              <input type="number" id="adm_flete_local" step="5" />
+            </div>
+            <div class="admin-field">
+              <span>Bajada Bandera Camión (USD):</span>
+              <input type="number" id="adm_flete_bajada" step="5" />
+            </div>
+            <div class="admin-field">
+              <span>Tarifa Km Regional (Z1):</span>
+              <input type="number" id="adm_km_z1" step="0.05" />
+            </div>
+            <div class="admin-field">
+              <span>Tarifa Km Vaca Muerta (Z2):</span>
+              <input type="number" id="adm_km_z2" step="0.05" />
+            </div>
+            <div class="admin-field">
+              <span>Tarifa Km Larga Dist. (Z3):</span>
+              <input type="number" id="adm_km_z3" step="0.05" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn-ghost" onclick="downloadConfigFile('json')">⬇ Descargar pricingConfig.json</button>
+          <button type="button" class="btn-ghost" onclick="downloadConfigFile('js')">⬇ Descargar CONFIG.js</button>
+          <button type="button" class="btn-ghost" onclick="resetDefaultConfig()">Restaurar Valores Originales</button>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <button type="button" class="btn-ghost" style="border-color:var(--spark); color:var(--spark-hi); padding:10px 14px;" onclick="saveAdminChanges()">
+            Guardar y Aplicar en Vivo
+          </button>
+          <button type="button" class="btn-export-public" onclick="exportPublicHTML()">
+            🚀 Exportar HTML público
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOQUE 1: CONFIGURACIÓN DE PRECIOS INCORPORADA (Se actualiza al exportar HTML público) -->
+  <script id="pricingConfigScript">
+    const DEFAULT_PRICING_CONFIG = {
+      ultimaActualizacion: "2026-10-22T19:45:00-03:00",
+      monedaBase: "USD",
+      tipoCambioARS: 1200,
+      mostrarPreciosEn: "USD",
+      ocultarPrecioTotalAlPublico: false,
+      margenRangoPorcentaje: 0.10,
+      whatsappComercial: "5492924000000",
+
+      estructuraBaseM2: {
+        tinglado: {
+          precioBaseM2: 80,
+          recargoAltura55mPorcentaje: 0.06,
+          recargoAltura70mPorcentaje: 0.14
+        },
+        galpon: {
+          precioBaseM2: 110,
+          recargoAltura55mPorcentaje: 0.08,
+          recargoAltura70mPorcentaje: 0.18
+        },
+        descuentoEscala500m2: 0.04,
+        descuentoEscala1000m2: 0.07
+      },
+
+      luminariaLED: {
+        campana150W_estandar_36m2: {
+          m2CoberturaPorUnidad: 36,
+          precioUnitarioInstalada: 145
+        },
+        campana200W_taller_25m2: {
+          m2CoberturaPorUnidad: 25,
+          precioUnitarioInstalada: 185
+        }
+      },
+
+      electricidadPorFase: {
+        ninguna: { cargoFijoTablero: 0, adicionalPorM2Tendido: 0 },
+        monofasica: { cargoFijoTablero: 650, adicionalPorM2Tendido: 4.5 },
+        bifasica: { cargoFijoTablero: 950, adicionalPorM2Tendido: 6.0 },
+        trifasica: { cargoFijoTablero: 1600, adicionalPorM2Tendido: 9.5 }
+      },
+
+      hormigonadoM2: {
+        "0cm": { precioM2LlaveEnMano: 0, nombre: "Sin piso de hormigón" },
+        "10cm": { precioM2LlaveEnMano: 34, nombre: "10 cm con Malla Simple Ø6mm (Uso Taller / Liviano)" },
+        "12cm": { precioM2LlaveEnMano: 41, nombre: "12 cm con Malla Simple Ø8mm (Uso Depósito / Comercial)" },
+        "15cm": { precioM2LlaveEnMano: 52, nombre: "15 cm con Malla Reforzada H25 (Uso Industrial / Autoelevadores)" },
+        "20cm": { precioM2LlaveEnMano: 68, nombre: "20 cm con Doble Malla H30 (Tránsito Pesado / Camiones)" }
+      },
+
+      persianasEnrollables: {
+        porton_35x35: {
+          nombre: "Persiana Eléctrica Estándar Taller (3.50 x 3.50 m)",
+          precioUnitarioInstalada: 2100,
+          alturaMinimaColumnaRequerida: 4.5
+        },
+        porton_45x45: {
+          nombre: "Persiana Eléctrica Estándar Industrial (4.50 x 4.50 m)",
+          precioUnitarioInstalada: 3150,
+          alturaMinimaColumnaRequerida: 5.0
+        },
+        porton_50x50: {
+          nombre: "Persiana Eléctrica Gran Porte (5.00 x 5.00 m)",
+          precioUnitarioInstalada: 4100,
+          alturaMinimaColumnaRequerida: 5.5
+        }
+      },
+
+      fleteNacionalDesdeDarregueira: {
+        origenNombre: "Darregueira, Pcia. de Buenos Aires",
+        coordenadasOrigen: { lat: -37.6897, lng: -63.1608 },
+        m2PorCamionTinglado: 800,
+        m2PorCamionGalpon: 600,
+        radioZonaLocalKm: 60,
+        cargoFijoZonaLocalUSD: 180,
+        bajadaBanderaPorCamionUSD: 150,
+        tarifaKmZona1RegionalUSD: 2.10,
+        tarifaKmZona2MediaUSD: 1.95,
+        tarifaKmZona3LargaUSD: 2.25,
+        destinosPredefinidosKm: [
+          { provincia: "Buenos Aires", localidad: "Darregueira / Puan / Guatraché", km: 25 },
+          { provincia: "La Pampa", localidad: "Santa Rosa", km: 115 },
+          { provincia: "Buenos Aires", localidad: "Bahía Blanca", km: 175 },
+          { provincia: "Neuquén", localidad: "Neuquén Capital / Centenario", km: 530 },
+          { provincia: "Neuquén", localidad: "Añelo (Vaca Muerta)", km: 610 },
+          { provincia: "Neuquén", localidad: "Cutral Có / Plaza Huincul", km: 635 },
+          { provincia: "Neuquén", localidad: "Rincón de los Sauces", km: 695 },
+          { provincia: "Neuquén", localidad: "Zapala", km: 710 },
+          { provincia: "CABA / GBA", localidad: "Buenos Aires (CABA / GBA)", km: 615 },
+          { provincia: "Córdoba", localidad: "Córdoba Capital", km: 690 },
+          { provincia: "Santa Fe", localidad: "Rosario", km: 640 },
+          { provincia: "Mendoza", localidad: "Mendoza Capital", km: 890 },
+          { provincia: "Chubut", localidad: "Comodoro Rivadavia", km: 1190 }
+        ]
+      }
+    };
+
+    // Inicialización de la matriz de precios activa
+    let pricingConfig = JSON.parse(JSON.stringify(DEFAULT_PRICING_CONFIG));
+  </script>
+
+  <!-- BLOQUE 2: MOTOR DEL COTIZADOR INTERACTIVO Y VISOR 3D ISOMÉTRICO (Compartido por ambas versiones) -->
+  <script id="quoterCoreScript">
+    // Opciones de dimensiones estándar + opción final "Personalizado"
+    const WIDTH_OPTIONS = [8, 10, 12, 15, 20, 25, "personalizado"];
+    const LENGTH_OPTIONS = [10, 15, 20, 25, 30, 35, 40, 50, 60, "personalizado"];
+
+    // Constantes técnicas para validación y distribución automática de persianas en paredes
+    const SHUTTER_SPECS = {
+      porton_35x35: { id: "porton_35x35", label: "Estándar Taller (3.50×3.50m)", shortLabel: "3.5×3.5m", ancho: 3.5, alto: 3.5, reqHeight: 4.5 },
+      porton_45x45: { id: "porton_45x45", label: "Estándar Industrial (4.50×4.50m)", shortLabel: "4.5×4.5m", ancho: 4.5, alto: 4.5, reqHeight: 5.0 },
+      porton_50x50: { id: "porton_50x50", label: "Gran Porte (5.00×5.00m)", shortLabel: "5.0×5.0m", ancho: 5.0, alto: 5.0, reqHeight: 5.5 }
+    };
+
+    const WALL_SPECS = {
+      frente: { id: "frente", label: "Frente", axis: "width" },
+      fondo: { id: "fondo", label: "Fondo", axis: "width" },
+      lateral_izq: { id: "lateral_izq", label: "Lateral izquierdo", axis: "length" },
+      lateral_der: { id: "lateral_der", label: "Lateral derecho", axis: "length" }
+    };
+
+    // Márgenes técnicos en metros:
+    // - SHUTTER_WALL_EDGE_CLEARANCE_M: retiro libre mínimo en cada extremo esquinero de columna (0.60 m a cada lado)
+    // - SHUTTER_MIN_GAP_BETWEEN_M: separación estructural mínima entre dos persianas contiguas en la misma pared (0.50 m)
+    const SHUTTER_WALL_EDGE_CLEARANCE_M = 0.60;
+    const SHUTTER_MIN_GAP_BETWEEN_M = 0.50;
+
+    // MODELO DE ESTADO REACTIVO (quoteState)
+    const quoteState = {
+      tipoEstructura: "galpon",
+      roofStyle: "dos_aguas", // 'dos_aguas' | 'parabolico'
+      cutawayView: true,
+      dimensiones: {
+        widthIndex: 1,              // Índice en WIDTH_OPTIONS (1 -> 10m)
+        lengthIndex: 3,             // Índice en LENGTH_OPTIONS (3 -> 25m)
+        anchoEsPersonalizado: false,
+        largoEsPersonalizado: false,
+        anchoMetros: 10,
+        largoMetros: 25,
+        m2Totales: 250,
+        altoColumnaMetros: 5.5
+      },
+      extras: {
+        luminaria: {
+          activo: true,
+          nivelEstandar: "taller_25m2",
+          cantidadUnidades: 10,
+          manualOverride: false
+        },
+        electricidad: {
+          activo: true,
+          fase: "trifasica"
+        },
+        hormigonado: {
+          activo: true,
+          espesorId: "10cm",
+          espesorCm: 10,
+          igualarM2Techo: true,
+          m2Personalizados: 250
+        },
+        persianas: {
+          activo: true,
+          nextInstanceId: 2,
+          // Lista de persianas individuales con su tipo y fachada asignada
+          list: [
+            { uid: 1, typeId: "porton_35x35", ubicacion: "frente" }
+          ]
+        },
+        flete: {
+          activo: true,
+          localidadDestino: "Bahía Blanca",
+          distanciaKm: 175
+        }
+      },
+      computoTecnico: {
+        cantidadPorticos: 6,
+        volumenHormigonM3: 26.3,
+        cantidadMallasSima: 20,
+        totalPersianasUnidades: 1,
+        cantidadCamiones: 1,
+        zonaFleteNombre: "ZONA 1 REGIONAL"
+      },
+      cotizacionUSD: {
+        subtotalEstructura: 0,
+        subtotalLuminaria: 0,
+        subtotalElectricidad: 0,
+        subtotalHormigon: 0,
+        subtotalPersianas: 0,
+        subtotalFlete: 0,
+        totalEstimado: 0,
+        rangoMin: 0,
+        rangoMax: 0,
+        hayItemsAConfirmar: false,
+        hayDimensionPersonalizada: false
+      }
+    };
+
+    // UTILIDADES DE VALIDACIÓN DE PAREDES Y PERSIANAS
+    function getWallTotalLengthMeters(wallId) {
+      const spec = WALL_SPECS[wallId];
+      if (!spec) return 10;
+      return spec.axis === "width" ? quoteState.dimensiones.anchoMetros : quoteState.dimensiones.largoMetros;
+    }
+
+    function computeWallRequiredSpanMeters(shutterTypesArray) {
+      const n = shutterTypesArray.length;
+      if (n === 0) return 0;
+      const sumWidths = shutterTypesArray.reduce((acc, tId) => acc + (SHUTTER_SPECS[tId]?.ancho || 0), 0);
+      const sumGaps = (n - 1) * SHUTTER_MIN_GAP_BETWEEN_M;
+      const sumEdges = 2 * SHUTTER_WALL_EDGE_CLEARANCE_M;
+      return Number((sumWidths + sumGaps + sumEdges).toFixed(2));
+    }
+
+    function canWallFitShutters(wallId, candidateTypeIdsArray) {
+      if (candidateTypeIdsArray.length === 0) return { fits: true, required: 0, available: getWallTotalLengthMeters(wallId) };
+      const wallLen = getWallTotalLengthMeters(wallId);
+      const reqSpan = computeWallRequiredSpanMeters(candidateTypeIdsArray);
+      return {
+        fits: reqSpan <= wallLen + 1e-6,
+        required: reqSpan,
+        available: wallLen
+      };
+    }
+
+    function getShuttersOnWall(wallId, excludeUid = null) {
+      return quoteState.extras.persianas.list.filter(item => item.ubicacion === wallId && item.uid !== excludeUid);
+    }
+
+    function validateAllShuttersAgainstCurrentWalls() {
+      // Si el usuario reduce el ancho o largo del galpón y en alguna pared las persianas ya no entran,
+      // removemos los excedentes desde el final e informamos claramente al usuario.
+      let removedCount = 0;
+      Object.keys(WALL_SPECS).forEach(wallId => {
+        const itemsOnWall = quoteState.extras.persianas.list.filter(i => i.ubicacion === wallId);
+        const acceptedUids = [];
+        const acceptedTypes = [];
+        itemsOnWall.forEach(item => {
+          const testTypes = [...acceptedTypes, item.typeId];
+          const check = canWallFitShutters(wallId, testTypes);
+          if (check.fits) {
+            acceptedUids.push(item.uid);
+            acceptedTypes.push(item.typeId);
+          } else {
+            removedCount++;
+          }
+        });
+        if (acceptedUids.length < itemsOnWall.length) {
+          quoteState.extras.persianas.list = quoteState.extras.persianas.list.filter(
+            i => i.ubicacion !== wallId || acceptedUids.includes(i.uid)
+          );
+        }
+      });
+
+      if (removedCount > 0) {
+        showRuleToast(
+          `<strong>AJUSTE DE VANOS EN PARED:</strong> Al reducir las dimensiones de la estructura, se ajustaron ${removedCount} persiana(s) que superaban la longitud útil de su fachada.`
+        );
+      }
+    }
+
+    // REGLAS INTELIGENTES DE VALIDACIÓN Y CÁLCULO TÉCNICO
+    function showRuleToast(msgHtml) {
+      const toast = document.getElementById("ruleToast");
+      const msg = document.getElementById("ruleToastMsg");
+      msg.innerHTML = msgHtml;
+      toast.classList.add("show");
+    }
+
+    function hideRuleToast() {
+      document.getElementById("ruleToast").classList.remove("show");
+    }
+
+    function enforceBusinessRules() {
+      // Regla 1: Exclusión por tipología Tinglado vs Galpón
+      if (quoteState.tipoEstructura === "tinglado") {
+        quoteState.extras.electricidad.activo = false;
+        quoteState.extras.hormigonado.activo = false;
+        quoteState.extras.persianas.activo = false;
+      }
+
+      // Validar que las persianas entren en la longitud real de cada pared
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.persianas.activo) {
+        validateAllShuttersAgainstCurrentWalls();
+      }
+
+      // Regla 2: Altura mínima de columna según persianas activas
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.persianas.activo) {
+        const has50 = quoteState.extras.persianas.list.some(i => i.typeId === "porton_50x50");
+        const has45 = quoteState.extras.persianas.list.some(i => i.typeId === "porton_45x45");
+
+        if (has50 && quoteState.dimensiones.altoColumnaMetros < 5.5) {
+          quoteState.dimensiones.altoColumnaMetros = 5.5;
+          showRuleToast("<strong>REGLA DE ALTURA:</strong> Ajustamos la altura libre a 5.50 m para alojar el tambor de la persiana Gran Porte (5×5 m).");
+        } else if (has45 && quoteState.dimensiones.altoColumnaMetros < 5.0) {
+          quoteState.dimensiones.altoColumnaMetros = 5.5;
+          showRuleToast("<strong>REGLA DE ALTURA:</strong> Ajustamos la altura libre a 5.50 m para la persiana industrial de 4.50×4.50 m.");
+        }
+      }
+
+      // Regla 3: Vinculación eléctrica automática si hay luminarias o persianas en Galpón
+      if (quoteState.tipoEstructura === "galpon") {
+        const totalPersianas = quoteState.extras.persianas.list.length;
+        const has50 = quoteState.extras.persianas.list.some(i => i.typeId === "porton_50x50");
+
+        if (!quoteState.extras.electricidad.activo && (quoteState.extras.luminaria.activo || (quoteState.extras.persianas.activo && totalPersianas > 0))) {
+          quoteState.extras.electricidad.activo = true;
+          quoteState.extras.electricidad.fase = has50 ? "trifasica" : "monofasica";
+          showRuleToast(`<strong>VINCULACIÓN ELÉCTRICA:</strong> Se incluyó alimentación ${has50 ? "Trifásica 380V" : "Monofásica 220V"} para abastecer luminarias y/o motores.`);
+        }
+      }
+    }
+
+    function computeMetricsAndCosts() {
+      const wOpt = WIDTH_OPTIONS[quoteState.dimensiones.widthIndex];
+      const lOpt = LENGTH_OPTIONS[quoteState.dimensiones.lengthIndex];
+
+      quoteState.dimensiones.anchoEsPersonalizado = (wOpt === "personalizado");
+      quoteState.dimensiones.largoEsPersonalizado = (lOpt === "personalizado");
+      const isCustomDim = quoteState.dimensiones.anchoEsPersonalizado || quoteState.dimensiones.largoEsPersonalizado;
+      quoteState.cotizacionUSD.hayDimensionPersonalizada = isCustomDim;
+
+      // Cuando una dimensión está en modo "Personalizado", no se utiliza una medida falsa como confirmada.
+      // Conservamos la medida numérica previa únicamente para dibujar una geometría ilustrativa en el visor 3D.
+      if (!quoteState.dimensiones.anchoEsPersonalizado) {
+        quoteState.dimensiones.anchoMetros = Number(wOpt);
+      }
+      if (!quoteState.dimensiones.largoEsPersonalizado) {
+        quoteState.dimensiones.largoMetros = Number(lOpt);
+      }
+
+      enforceBusinessRules();
+
+      const m2 = quoteState.dimensiones.anchoMetros * quoteState.dimensiones.largoMetros;
+      quoteState.dimensiones.m2Totales = m2;
+
+      // Pórticos cada 5m
+      quoteState.computoTecnico.cantidadPorticos = Math.floor(quoteState.dimensiones.largoMetros / 5) + 1;
+
+      // Dotación automática de luminarias si no hubo override manual
+      if (!quoteState.extras.luminaria.manualOverride) {
+        const cob = quoteState.extras.luminaria.nivelEstandar === "taller_25m2" ? 25 : 36;
+        quoteState.extras.luminaria.cantidadUnidades = Math.ceil(m2 / cob);
+      }
+
+      // Superficie de hormigón
+      if (quoteState.extras.hormigonado.igualarM2Techo) {
+        quoteState.extras.hormigonado.m2Personalizados = m2;
+      }
+      const slabM2 = quoteState.extras.hormigonado.m2Personalizados;
+
+      // Cómputo de m3 de hormigón y mallas SIMA
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.hormigonado.activo) {
+        const esp = quoteState.extras.hormigonado.espesorId;
+        const factorVol = esp === "10cm" ? 0.105 : esp === "12cm" ? 0.126 : esp === "15cm" ? 0.158 : 0.210;
+        const factorMalla = esp === "10cm" ? 1.10 : esp === "12cm" ? 1.10 : esp === "15cm" ? 1.15 : 2.25;
+        quoteState.computoTecnico.volumenHormigonM3 = Number((slabM2 * factorVol).toFixed(1));
+        quoteState.computoTecnico.cantidadMallasSima = Math.ceil((slabM2 / 14.4) * factorMalla);
+      } else {
+        quoteState.computoTecnico.volumenHormigonM3 = 0;
+        quoteState.computoTecnico.cantidadMallasSima = 0;
+      }
+
+      // Total persianas
+      const totalShutters = (quoteState.tipoEstructura === "galpon" && quoteState.extras.persianas.activo)
+        ? quoteState.extras.persianas.list.length
+        : 0;
+      quoteState.computoTecnico.totalPersianasUnidades = totalShutters;
+
+      // Cálculo de Costos en USD
+      let hayNulls = false;
+
+      // 1. Estructura Base + Altura + Descuento de escala
+      const cfgEst = pricingConfig.estructuraBaseM2[quoteState.tipoEstructura];
+      let precioM2Est = cfgEst.precioBaseM2;
+      if (quoteState.dimensiones.altoColumnaMetros >= 7.0) {
+        precioM2Est *= (1 + cfgEst.recargoAltura70mPorcentaje);
+      } else if (quoteState.dimensiones.altoColumnaMetros >= 5.0) {
+        precioM2Est *= (1 + cfgEst.recargoAltura55mPorcentaje);
+      }
+
+      // Regla 4: Descuento por escala (500 m2 -> -4%, 1000 m2 -> -7%)
+      let descEscala = 0;
+      if (m2 >= 1000) {
+        descEscala = pricingConfig.estructuraBaseM2.descuentoEscala1000m2 ?? 0.07;
+      } else if (m2 >= 500) {
+        descEscala = pricingConfig.estructuraBaseM2.descuentoEscala500m2 ?? 0.04;
+      }
+      precioM2Est *= (1 - descEscala);
+      quoteState.cotizacionUSD.subtotalEstructura = isCustomDim ? null : Math.round(m2 * precioM2Est);
+
+      // 2. Luminaria LED
+      if (quoteState.extras.luminaria.activo) {
+        const keyLed = quoteState.extras.luminaria.nivelEstandar === "taller_25m2"
+          ? "campana200W_taller_25m2"
+          : "campana150W_estandar_36m2";
+        const unitLed = pricingConfig.luminariaLED[keyLed].precioUnitarioInstalada;
+        if (unitLed === null) {
+          quoteState.cotizacionUSD.subtotalLuminaria = null;
+          hayNulls = true;
+        } else {
+          quoteState.cotizacionUSD.subtotalLuminaria = Math.round(quoteState.extras.luminaria.cantidadUnidades * unitLed);
+        }
+      } else {
+        quoteState.cotizacionUSD.subtotalLuminaria = 0;
+      }
+
+      // 3. Electricidad por Fases
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.electricidad.activo) {
+        const cfgElec = pricingConfig.electricidadPorFase[quoteState.extras.electricidad.fase];
+        if (cfgElec.cargoFijoTablero === null || isCustomDim) {
+          quoteState.cotizacionUSD.subtotalElectricidad = null;
+          if (cfgElec.cargoFijoTablero === null) hayNulls = true;
+        } else {
+          quoteState.cotizacionUSD.subtotalElectricidad = Math.round(cfgElec.cargoFijoTablero + (m2 * cfgElec.adicionalPorM2Tendido));
+        }
+      } else {
+        quoteState.cotizacionUSD.subtotalElectricidad = 0;
+      }
+
+      // 4. Hormigonado
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.hormigonado.activo) {
+        const cfgHorm = pricingConfig.hormigonadoM2[quoteState.extras.hormigonado.espesorId];
+        if (cfgHorm.precioM2LlaveEnMano === null || (isCustomDim && quoteState.extras.hormigonado.igualarM2Techo)) {
+          quoteState.cotizacionUSD.subtotalHormigon = null;
+          if (cfgHorm.precioM2LlaveEnMano === null) hayNulls = true;
+        } else {
+          quoteState.cotizacionUSD.subtotalHormigon = Math.round(slabM2 * cfgHorm.precioM2LlaveEnMano);
+        }
+      } else {
+        quoteState.cotizacionUSD.subtotalHormigon = 0;
+      }
+
+      // 5. Persianas Enrollables
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.persianas.activo && totalShutters > 0) {
+        let sumShutters = 0;
+        let shutterNull = false;
+        quoteState.extras.persianas.list.forEach(item => {
+          const pUnit = pricingConfig.persianasEnrollables[item.typeId]?.precioUnitarioInstalada;
+          if (pUnit === null) {
+            shutterNull = true;
+          } else {
+            sumShutters += (pUnit || 0);
+          }
+        });
+        if (shutterNull) {
+          quoteState.cotizacionUSD.subtotalPersianas = null;
+          hayNulls = true;
+        } else {
+          quoteState.cotizacionUSD.subtotalPersianas = Math.round(sumShutters);
+        }
+      } else {
+        quoteState.cotizacionUSD.subtotalPersianas = 0;
+      }
+
+      // 6. Logística Nacional con Camiones con Acoplado desde Darregueira
+      // Capacidad de referencia por viaje en camión con acoplado:
+      // - Galpón cerrado completo: 600 m² cubiertos por camión con acoplado (un galpón de 60×20m = 1.200 m² requiere 2 camiones).
+      // - Tinglado abierto: 800 m² cubiertos por camión con acoplado.
+      const cfgFlete = pricingConfig.fleteNacionalDesdeDarregueira;
+      const capCamion = quoteState.tipoEstructura === "tinglado"
+        ? (cfgFlete.m2PorCamionTinglado || 800)
+        : (cfgFlete.m2PorCamionGalpon || 600);
+      const camiones = Math.ceil(m2 / capCamion);
+      quoteState.computoTecnico.cantidadCamiones = camiones;
+
+      const km = quoteState.extras.flete.distanciaKm;
+      if (quoteState.extras.flete.activo) {
+        if (km <= cfgFlete.radioZonaLocalKm) {
+          quoteState.computoTecnico.zonaFleteNombre = "ZONA 0 LOCAL (0-60 km)";
+          quoteState.cotizacionUSD.subtotalFlete = isCustomDim ? null : Math.round(cfgFlete.cargoFijoZonaLocalUSD * camiones);
+        } else if (km <= 250) {
+          quoteState.computoTecnico.zonaFleteNombre = "ZONA 1 REGIONAL (61-250 km)";
+          quoteState.cotizacionUSD.subtotalFlete = isCustomDim ? null : Math.round((cfgFlete.bajadaBanderaPorCamionUSD * camiones) + (km * cfgFlete.tarifaKmZona1RegionalUSD * camiones));
+        } else if (km <= 750) {
+          quoteState.computoTecnico.zonaFleteNombre = "ZONA 2 VACA MUERTA / CENTRO (251-750 km)";
+          quoteState.cotizacionUSD.subtotalFlete = isCustomDim ? null : Math.round((cfgFlete.bajadaBanderaPorCamionUSD * camiones) + (km * cfgFlete.tarifaKmZona2MediaUSD * camiones));
+        } else {
+          quoteState.computoTecnico.zonaFleteNombre = "ZONA 3 LARGA DISTANCIA (+750 km)";
+          quoteState.cotizacionUSD.subtotalFlete = isCustomDim ? null : Math.round((cfgFlete.bajadaBanderaPorCamionUSD * camiones) + (km * cfgFlete.tarifaKmZona3LargaUSD * camiones));
+        }
+      } else {
+        quoteState.computoTecnico.zonaFleteNombre = "SIN FLETE";
+        quoteState.cotizacionUSD.subtotalFlete = 0;
+      }
+
+      // Suma Total y Rango de Incertidumbre (±10% por defecto: 90% a 110% del valor base)
+      if (isCustomDim) {
+        quoteState.cotizacionUSD.totalEstimado = null;
+        quoteState.cotizacionUSD.rangoMin = null;
+        quoteState.cotizacionUSD.rangoMax = null;
+      } else {
+        const parts = [
+          quoteState.cotizacionUSD.subtotalEstructura,
+          quoteState.cotizacionUSD.subtotalLuminaria,
+          quoteState.cotizacionUSD.subtotalElectricidad,
+          quoteState.cotizacionUSD.subtotalHormigon,
+          quoteState.cotizacionUSD.subtotalPersianas,
+          quoteState.cotizacionUSD.subtotalFlete
+        ];
+        const total = parts.reduce((acc, val) => acc + (typeof val === "number" ? val : 0), 0);
+        quoteState.cotizacionUSD.totalEstimado = total;
+        const margen = pricingConfig.margenRangoPorcentaje ?? 0.10;
+        quoteState.cotizacionUSD.rangoMin = Math.round(total * (1 - margen));
+        quoteState.cotizacionUSD.rangoMax = Math.round(total * (1 + margen));
+      }
+      quoteState.cotizacionUSD.hayItemsAConfirmar = hayNulls;
+    }
+
+    // Formateador de Moneda (USD / ARS)
+    function formatMoney(usdValue) {
+      if (usdValue === null) return "A confirmar";
+      if (pricingConfig.mostrarPreciosEn === "ARS") {
+        const ars = Math.round(usdValue * pricingConfig.tipoCambioARS);
+        return "ARS $ " + ars.toLocaleString("es-AR");
+      }
+      return "USD " + usdValue.toLocaleString("es-AR");
+    }
+
+    // Cálculo de posiciones centradas y distribuidas automáticamente para las persianas de una pared
+    function computeWallShutterCenters(wallLen, shutterItems) {
+      const n = shutterItems.length;
+      if (n === 0) return [];
+      const sumW = shutterItems.reduce((acc, it) => acc + (SHUTTER_SPECS[it.typeId]?.ancho || 3.5), 0);
+      const usableLen = Math.max(sumW, wallLen - 2 * SHUTTER_WALL_EDGE_CLEARANCE_M);
+      const extraSpace = Math.max(0, usableLen - sumW);
+      // Repartimos el espacio libre de manera uniforme entre los vanos y sus márgenes laterales
+      const gap = extraSpace / (n + 1);
+      let cursor = SHUTTER_WALL_EDGE_CLEARANCE_M + gap;
+      return shutterItems.map(it => {
+        const spec = SHUTTER_SPECS[it.typeId] || SHUTTER_SPECS.porton_35x35;
+        const center = cursor + spec.ancho / 2;
+        cursor += spec.ancho + gap;
+        return {
+          uid: it.uid,
+          typeId: it.typeId,
+          ancho: spec.ancho,
+          alto: spec.alto,
+          shortLabel: spec.shortLabel,
+          centerPos: center
+        };
+      });
+    }
+
+    // MOTOR DE RENDERIZADO 3D ISOMÉTRICO (Sin pickup, con geometría exacta de techo, luminarias y 4 fachadas)
+    function renderIsometricSVG() {
+      const svg = document.getElementById("isoViewer");
+      const W = quoteState.dimensiones.anchoMetros;
+      const L = quoteState.dimensiones.largoMetros;
+      const H = quoteState.dimensiones.altoColumnaMetros;
+      const isParabolic = quoteState.roofStyle === "parabolico";
+      const isCustomDim = quoteState.cotizacionUSD.hayDimensionPersonalizada;
+
+      // Escala y centrado dinámico aprovechando el área del visor
+      const maxSpan = Math.max(W + L, 28);
+      const scale = Math.min(14.8, 465 / maxSpan);
+      const originX = 400 + (L - W) * scale * 0.36;
+      const originY = 365;
+
+      const COS30 = 0.866025;
+      const SIN30 = 0.5;
+
+      // Proyección Isométrica 30°:
+      // x [0..W] transversal hacia abajo-izquierda (x=0 Lateral Derecho, x=W Lateral Izquierdo)
+      // y [0..L] longitudinal hacia arriba-derecha (y=0 Frente, y=L Fondo)
+      // z [0..H] altura vertical hacia arriba
+      function iso(x, y, z) {
+        const px = originX + (y - x) * COS30 * scale;
+        const py = originY - (x + y) * SIN30 * scale - z * scale * 1.15;
+        return { x: Number(px.toFixed(1)), y: Number(py.toFixed(1)) };
+      }
+
+      function polyPoints(pts) {
+        return pts.map(p => `${p.x},${p.y}`).join(" ");
+      }
+
+      // Altura de cumbrera
+      const ridgeRise = Math.max(1.3, W * 0.14);
+      const ridgeH = H + ridgeRise;
+
+      // Función matemática única para la altura z de la cubierta según posición transversal x [0..W]
+      function roofZAtX(x) {
+        const u = (x / W) - 0.5; // [-0.5 .. 0.5]
+        if (isParabolic) {
+          return H + ridgeRise * (1 - 4 * u * u);
+        }
+        return H + ridgeRise * (1 - 2 * Math.abs(u));
+      }
+
+      // Muestreo de puntos del perfil transversal del techo (en una coordenada longitudinal y fija)
+      function sampleRoofProfilePoints(yCoord, steps = 16) {
+        if (!isParabolic) {
+          return [iso(0, yCoord, H), iso(W / 2, yCoord, ridgeH), iso(W, yCoord, H)];
+        }
+        const pts = [];
+        for (let i = 0; i <= steps; i++) {
+          const x = (W * i) / steps;
+          pts.push(iso(x, yCoord, roofZAtX(x)));
+        }
+        return pts;
+      }
+
+      let html = `
+        <defs>
+          <radialGradient id="ledConeGrad" cx="50%" cy="0%" r="85%">
+            <stop offset="0%" stop-color="#ffb066" stop-opacity="0.50"/>
+            <stop offset="55%" stop-color="#ff7a1a" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#ff7a1a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      `;
+
+      // CAPA 0: GRILLA ISOMÉTRICA DE TERRENO Y COTAS TÉCNICAS (Sin pickup)
+      const pad = 8;
+      html += `<g id="layer0_terrain">`;
+      for (let gx = -5; gx <= W + pad; gx += 5) {
+        const p1 = iso(gx, -5, 0);
+        const p2 = iso(gx, L + pad, 0);
+        html += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#2a2e33" stroke-width="1"/>`;
+      }
+      for (let gy = -5; gy <= L + pad; gy += 5) {
+        const p1 = iso(-5, gy, 0);
+        const p2 = iso(W + pad, gy, 0);
+        html += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#2a2e33" stroke-width="1"/>`;
+      }
+
+      const wLabelText = quoteState.dimensiones.anchoEsPersonalizado ? `ANCHO: PERSONALIZADO (Ref. ${W}m)` : `ANCHO: ${W}m`;
+      const lLabelText = quoteState.dimensiones.largoEsPersonalizado
+        ? `LARGO: PERSONALIZADO (Ref. ${L}m)`
+        : `LARGO: ${L}m (${quoteState.computoTecnico.cantidadPorticos} PÓRTICOS)`;
+
+      const cotaW1 = iso(0, -3.0, 0);
+      const cotaW2 = iso(W, -3.0, 0);
+      const cotaWMid = iso(W / 2, -4.6, 0);
+      html += `
+        <line x1="${cotaW1.x}" y1="${cotaW1.y}" x2="${cotaW2.x}" y2="${cotaW2.y}" stroke="#ff7a1a" stroke-width="1.6"/>
+        <circle cx="${cotaW1.x}" cy="${cotaW1.y}" r="3" fill="#ff7a1a"/>
+        <circle cx="${cotaW2.x}" cy="${cotaW2.y}" r="3" fill="#ff7a1a"/>
+        <text x="${cotaWMid.x}" y="${cotaWMid.y + 12}" fill="#ff7a1a" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" text-anchor="middle">${wLabelText}</text>
+      `;
+
+      const cotaL1 = iso(-3.0, 0, 0);
+      const cotaL2 = iso(-3.0, L, 0);
+      const cotaLMid = iso(-5.0, L / 2, 0);
+      html += `
+        <line x1="${cotaL1.x}" y1="${cotaL1.y}" x2="${cotaL2.x}" y2="${cotaL2.y}" stroke="#ff7a1a" stroke-width="1.6"/>
+        <circle cx="${cotaL1.x}" cy="${cotaL1.y}" r="3" fill="#ff7a1a"/>
+        <circle cx="${cotaL2.x}" cy="${cotaL2.y}" r="3" fill="#ff7a1a"/>
+        <text x="${cotaLMid.x + 15}" y="${cotaLMid.y - 6}" fill="#ff7a1a" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" text-anchor="middle">${lLabelText}</text>
+      `;
+
+      const cotaH1 = iso(W + 2, 0, 0);
+      const cotaH2 = iso(W + 2, 0, H);
+      html += `
+        <line x1="${cotaH1.x}" y1="${cotaH1.y}" x2="${cotaH2.x}" y2="${cotaH2.y}" stroke="#ffb066" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <text x="${cotaH2.x - 8}" y="${(cotaH1.y + cotaH2.y) / 2}" fill="#ffb066" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" text-anchor="end">ALTO ${H}m</text>
+      `;
+      html += `</g>`;
+
+      // CAPA 1: PLATEA DE HORMIGÓN Y MALLA SIMA
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.hormigonado.activo) {
+        const espId = quoteState.extras.hormigonado.espesorId;
+        const slabThickPx = espId === "10cm" ? 5 : espId === "12cm" ? 7 : espId === "15cm" ? 10 : 14;
+        const s0 = iso(0, 0, 0);
+        const sW = iso(W, 0, 0);
+        const sWL = iso(W, L, 0);
+        const sL = iso(0, L, 0);
+
+        html += `<g id="layer1_slab">`;
+        html += `<polygon points="${s0.x},${s0.y} ${sW.x},${sW.y} ${sW.x},${sW.y + slabThickPx} ${s0.x},${s0.y + slabThickPx}" fill="#1f2226" stroke="#8b9097" stroke-width="1"/>`;
+        html += `<polygon points="${s0.x},${s0.y} ${sL.x},${sL.y} ${sL.x},${sL.y + slabThickPx} ${s0.x},${s0.y + slabThickPx}" fill="#17191b" stroke="#8b9097" stroke-width="1"/>`;
+        html += `<polygon points="${polyPoints([s0, sW, sWL, sL])}" fill="#2a2e33" stroke="#8b9097" stroke-width="1.4"/>`;
+
+        const cutW = Math.min(W * 0.35, 5);
+        const cutL = Math.min(L * 0.25, 6);
+        for (let mx = 0.8; mx <= cutW; mx += 1.1) {
+          const mp1 = iso(mx, 0.6, 0.05);
+          const mp2 = iso(mx, cutL, 0.05);
+          html += `<line x1="${mp1.x}" y1="${mp1.y}" x2="${mp2.x}" y2="${mp2.y}" stroke="#ff7a1a" stroke-width="1.1" opacity="0.85"/>`;
+        }
+        for (let my = 0.8; my <= cutL; my += 1.1) {
+          const mp1 = iso(0.6, my, 0.05);
+          const mp2 = iso(cutW, my, 0.05);
+          html += `<line x1="${mp1.x}" y1="${mp1.y}" x2="${mp2.x}" y2="${mp2.y}" stroke="#ff7a1a" stroke-width="1.1" opacity="0.85"/>`;
+        }
+        if (espId === "20cm") {
+          for (let mx = 1.2; mx <= cutW; mx += 1.1) {
+            const mp1 = iso(mx, 0.6, 0.18);
+            const mp2 = iso(mx, cutL, 0.18);
+            html += `<line x1="${mp1.x}" y1="${mp1.y}" x2="${mp2.x}" y2="${mp2.y}" stroke="#ffb066" stroke-width="1" stroke-dasharray="2 2"/>`;
+          }
+        }
+        html += `</g>`;
+      }
+
+      // Función auxiliar para dibujar una persiana sobre cualquiera de las 4 paredes
+      function renderShutterOnWallSVG(wallId, door) {
+        const halfW = door.ancho / 2;
+        const dH = Math.min(door.alto, H - 0.25);
+        let pBL, pBR, pTR, pTL, pMidL, pMidR;
+
+        if (wallId === "frente") {
+          // Pared Frente: y = 0, centro en eje X
+          const cx = door.centerPos;
+          pBL = iso(cx + halfW, 0, 0);
+          pBR = iso(cx - halfW, 0, 0);
+          pTR = iso(cx - halfW, 0, dH);
+          pTL = iso(cx + halfW, 0, dH);
+          pMidL = iso(cx + halfW, 0, dH * 0.48);
+          pMidR = iso(cx - halfW, 0, dH * 0.48);
+        } else if (wallId === "fondo") {
+          // Pared Fondo: y = L, centro en eje X
+          const cx = door.centerPos;
+          pBL = iso(cx + halfW, L, 0);
+          pBR = iso(cx - halfW, L, 0);
+          pTR = iso(cx - halfW, L, dH);
+          pTL = iso(cx + halfW, L, dH);
+          pMidL = iso(cx + halfW, L, dH * 0.48);
+          pMidR = iso(cx - halfW, L, dH * 0.48);
+        } else if (wallId === "lateral_izq") {
+          // Pared Lateral Izquierdo: x = W, centro en eje Y
+          const cy = door.centerPos;
+          pBL = iso(W, cy - halfW, 0);
+          pBR = iso(W, cy + halfW, 0);
+          pTR = iso(W, cy + halfW, dH);
+          pTL = iso(W, cy - halfW, dH);
+          pMidL = iso(W, cy - halfW, dH * 0.48);
+          pMidR = iso(W, cy + halfW, dH * 0.48);
+        } else {
+          // Pared Lateral Derecho: x = 0, centro en eje Y
+          const cy = door.centerPos;
+          pBL = iso(0, cy - halfW, 0);
+          pBR = iso(0, cy + halfW, 0);
+          pTR = iso(0, cy + halfW, dH);
+          pTL = iso(0, cy - halfW, dH);
+          pMidL = iso(0, cy - halfW, dH * 0.48);
+          pMidR = iso(0, cy + halfW, dH * 0.48);
+        }
+
+        const labelX = (pTL.x + pTR.x) / 2;
+        const labelY = Math.min(pTL.y, pTR.y) - 5;
+
+        return `
+          <g class="shutter-3d-unit">
+            <polygon points="${polyPoints([pBL, pBR, pMidR, pMidL])}" fill="#ffb066" fill-opacity="0.24"/>
+            <polygon points="${polyPoints([pMidL, pMidR, pTR, pTL])}" fill="#2a2e33" stroke="#3a3f46" stroke-width="1"/>
+            <polygon points="${polyPoints([pBL, pBR, pTR, pTL])}" fill="none" stroke="#ff7a1a" stroke-width="2.8"/>
+            <text x="${labelX}" y="${labelY}" fill="#ffb066" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">${door.shortLabel}</text>
+          </g>
+        `;
+      }
+
+      // CAPA 3A: PAREDES TRASERAS SÓLIDAS (Fondo y=L y Lateral Derecho x=0) + SUS PERSIANAS
+      if (quoteState.tipoEstructura === "galpon") {
+        const backRoofPts = sampleRoofProfilePoints(L, 16);
+        const backWallPts = [iso(0, L, 0), ...backRoofPts, iso(W, L, 0)];
+
+        const r0 = iso(0, 0, 0);
+        const rL = iso(0, L, 0);
+        const rLT = iso(0, L, H);
+        const r0T = iso(0, 0, H);
+
+        html += `<g id="layer3_back_walls">`;
+        html += `<polygon points="${polyPoints(backWallPts)}" fill="#22262b" stroke="#5a6068" stroke-width="1.2"/>`;
+        html += `<polygon points="${polyPoints([r0, rL, rLT, r0T])}" fill="#1f2226" stroke="#5a6068" stroke-width="1.2"/>`;
+
+        if (quoteState.extras.persianas.activo) {
+          const fondoShutters = computeWallShutterCenters(W, getShuttersOnWall("fondo"));
+          fondoShutters.forEach(d => { html += renderShutterOnWallSVG("fondo", d); });
+
+          const latDerShutters = computeWallShutterCenters(L, getShuttersOnWall("lateral_der"));
+          latDerShutters.forEach(d => { html += renderShutterOnWallSVG("lateral_der", d); });
+        }
+        html += `</g>`;
+      }
+
+      // CAPA 5: CAMPANAS INDUSTRIALES LED (Sincronización exacta con la cantidad seleccionada)
+      if (quoteState.extras.luminaria.activo && quoteState.extras.luminaria.cantidadUnidades > 0) {
+        const totalLeds = quoteState.extras.luminaria.cantidadUnidades;
+        html += `<g id="layer5_leds" data-led-count="${totalLeds}">`;
+
+        // Distribuimos exactamente `totalLeds` campanas en una grilla proporcionada dentro del galpón (W × L)
+        const aspect = L / Math.max(W, 1);
+        const cols = Math.max(1, Math.min(totalLeds, Math.round(Math.sqrt(totalLeds / aspect))));
+        const baseRows = Math.ceil(totalLeds / cols);
+
+        let placed = 0;
+        for (let r = 0; r < baseRows && placed < totalLeds; r++) {
+          const remaining = totalLeds - placed;
+          const colsInThisRow = (r === baseRows - 1) ? remaining : Math.min(cols, remaining);
+          const ly = (L / (baseRows + 1)) * (r + 1);
+
+          for (let c = 0; c < colsInThisRow && placed < totalLeds; c++) {
+            const lx = (W / (colsInThisRow + 1)) * (c + 1);
+            const lampZ = roofZAtX(lx) - 0.25;
+            const lampTop = iso(lx, ly, lampZ);
+            const coneSpread = Math.min(2.2, Math.max(1.1, W / (cols * 3.2)));
+            const floorLeft = iso(lx + coneSpread, ly - coneSpread * 0.65, 0);
+            const floorRight = iso(lx - coneSpread, ly + coneSpread * 0.65, 0);
+
+            html += `
+              <g class="led-lamp-unit">
+                <polygon points="${lampTop.x},${lampTop.y} ${floorLeft.x},${floorLeft.y} ${floorRight.x},${floorRight.y}" fill="url(#ledConeGrad)" pointer-events="none"/>
+                <circle cx="${lampTop.x}" cy="${lampTop.y}" r="5" fill="#ff7a1a" opacity="0.38"/>
+                <circle cx="${lampTop.x}" cy="${lampTop.y}" r="2.5" fill="#fff4e6"/>
+              </g>
+            `;
+            placed++;
+          }
+        }
+        html += `</g>`;
+      }
+
+      // CAPA 2: PÓRTICOS DE ACERO ALMAFUERTE Y CORREAS LONGITUDINALES
+      html += `<g id="layer2_steel_frames" data-roof-style="${quoteState.roofStyle}">`;
+      const purlinPositions = [0, 0.25, 0.5, 0.75, 1];
+      purlinPositions.forEach(t => {
+        const px = W * t;
+        const pz = roofZAtX(px);
+        const pStart = iso(px, 0, pz);
+        const pEnd = iso(px, L, pz);
+        html += `<line x1="${pStart.x}" y1="${pStart.y}" x2="${pEnd.x}" y2="${pEnd.y}" stroke="#8b9097" stroke-width="1.1"/>`;
+      });
+
+      for (let py = 0; py <= L; py += 5) {
+        const colLBot = iso(W, py, 0);
+        const colLTop = iso(W, py, H);
+        const colRBot = iso(0, py, 0);
+        const colRTop = iso(0, py, H);
+
+        // Columnas verticales
+        html += `<line x1="${colLBot.x}" y1="${colLBot.y}" x2="${colLTop.x}" y2="${colLTop.y}" stroke="#c9ccd1" stroke-width="2.4"/>`;
+        html += `<line x1="${colRBot.x}" y1="${colRBot.y}" x2="${colRTop.x}" y2="${colRTop.y}" stroke="#c9ccd1" stroke-width="2.4"/>`;
+
+        // Cabreada según tipo de cubierta seleccionado (sin geometría residual del otro modo)
+        const archPts = sampleRoofProfilePoints(py, 16);
+        html += `<polyline points="${polyPoints(archPts)}" fill="none" stroke="#c9ccd1" stroke-width="2.3"/>`;
+        // Tensor inferior horizontal de la cabreada
+        html += `<line x1="${colLTop.x}" y1="${colLTop.y}" x2="${colRTop.x}" y2="${colRTop.y}" stroke="#8b9097" stroke-width="1" stroke-dasharray="3 2"/>`;
+      }
+      html += `</g>`;
+
+      // CAPA 3B: CUBIERTA SUPERIOR Y PAREDES FRONTALES TRANSLÚCIDAS (Frente y=0 y Lateral Izquierdo x=W)
+      const roofOpacity = quoteState.cutawayView ? 0.32 : 0.88;
+      const wallFrontOpacity = quoteState.cutawayView ? 0.28 : 0.88;
+
+      html += `<g id="layer3_front_cutaway">`;
+      if (!isParabolic) {
+        // Cubierta a Dos Aguas (2 faldones planos)
+        const rf1 = iso(W, 0, H);
+        const rf2 = iso(W, L, H);
+        const rf3 = iso(W / 2, L, ridgeH);
+        const rf4 = iso(W / 2, 0, ridgeH);
+        html += `<polygon points="${polyPoints([rf1, rf2, rf3, rf4])}" fill="#22262b" fill-opacity="${roofOpacity}" stroke="#8b9097" stroke-width="1.2"/>`;
+
+        const rr1 = iso(0, 0, H);
+        const rr2 = iso(0, L, H);
+        html += `<polygon points="${polyPoints([rf4, rf3, rr2, rr1])}" fill="#2a2e33" fill-opacity="${roofOpacity}" stroke="#8b9097" stroke-width="1.2"/>`;
+      } else {
+        // Cubierta Parabólica Curva (bandas longitudinales suaves siguiendo el arco parabólico, sin arista triangular)
+        const strips = 12;
+        for (let s = 0; s < strips; s++) {
+          const x1 = (W * s) / strips;
+          const x2 = (W * (s + 1)) / strips;
+          const z1 = roofZAtX(x1);
+          const z2 = roofZAtX(x2);
+          const p1 = iso(x1, 0, z1);
+          const p2 = iso(x2, 0, z2);
+          const p3 = iso(x2, L, z2);
+          const p4 = iso(x1, L, z1);
+          const shade = s < strips / 2 ? "#2a2e33" : "#22262b";
+          html += `<polygon points="${polyPoints([p1, p2, p3, p4])}" fill="${shade}" fill-opacity="${roofOpacity}" stroke="none"/>`;
+        }
+        // Contornos curvos frontal y trasero de la cubierta parabólica
+        const frontArc = sampleRoofProfilePoints(0, 16);
+        const backArc = sampleRoofProfilePoints(L, 16);
+        html += `<polyline points="${polyPoints(frontArc)}" fill="none" stroke="#8b9097" stroke-width="1.3"/>`;
+        html += `<polyline points="${polyPoints(backArc)}" fill="none" stroke="#8b9097" stroke-width="1.3"/>`;
+      }
+
+      if (quoteState.tipoEstructura === "galpon") {
+        // Pared Lateral Izquierdo (x = W)
+        const wf1 = iso(W, 0, 0);
+        const wf2 = iso(W, L, 0);
+        const wf3 = iso(W, L, H);
+        const wf4 = iso(W, 0, H);
+        html += `<polygon points="${polyPoints([wf1, wf2, wf3, wf4])}" fill="#22262b" fill-opacity="${wallFrontOpacity}" stroke="#5a6068" stroke-width="1.3"/>`;
+
+        // Pared Frontal (y = 0) siguiendo la silueta exacta del techo (2 aguas o parabólico)
+        const frontRoofPts = sampleRoofProfilePoints(0, 16);
+        const frontWallPts = [iso(0, 0, 0), ...frontRoofPts, iso(W, 0, 0)];
+        html += `<polygon points="${polyPoints(frontWallPts)}" fill="#22262b" fill-opacity="${wallFrontOpacity}" stroke="#5a6068" stroke-width="1.3"/>`;
+      }
+      html += `</g>`;
+
+      // CAPA 4: PERSIANAS EN PAREDES FRONTALES (Frente y Lateral Izquierdo)
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.persianas.activo) {
+        html += `<g id="layer4_shutters">`;
+        const frenteShutters = computeWallShutterCenters(W, getShuttersOnWall("frente"));
+        frenteShutters.forEach(d => { html += renderShutterOnWallSVG("frente", d); });
+
+        const latIzqShutters = computeWallShutterCenters(L, getShuttersOnWall("lateral_izq"));
+        latIzqShutters.forEach(d => { html += renderShutterOnWallSVG("lateral_izq", d); });
+        html += `</g>`;
+      }
+
+      // CAPA 6: TABLERO ELÉCTRICO Y BANDEJA PORTACABLES
+      if (quoteState.tipoEstructura === "galpon" && quoteState.extras.electricidad.activo) {
+        const fase = quoteState.extras.electricidad.fase;
+        const badgeLabel = fase === "trifasica" ? "380V TRIFÁSICA" : fase === "bifasica" ? "BIFÁSICA RURAL" : "220V MONOFÁSICA";
+        const cabPos = iso(0, 0, 1.8);
+        const trayStart = iso(0, 0, H - 0.3);
+        const trayEnd = iso(0, L, H - 0.3);
+
+        html += `
+          <g id="layer6_electric">
+            <line x1="${trayStart.x}" y1="${trayStart.y}" x2="${trayEnd.x}" y2="${trayEnd.y}" stroke="#ff7a1a" stroke-width="2" stroke-dasharray="5 3"/>
+            <rect x="${cabPos.x - 7}" y="${cabPos.y - 9}" width="14" height="18" rx="2" fill="#1f2226" stroke="#ff7a1a" stroke-width="2"/>
+            <text x="${cabPos.x + 12}" y="${cabPos.y + 3}" fill="#ffb066" font-family="IBM Plex Mono, monospace" font-size="9.5" font-weight="700">${badgeLabel}</text>
+          </g>
+        `;
+      }
+
+      // Aviso ilustrativo en el visor 3D cuando se selecciona una dimensión Personalizada
+      if (isCustomDim) {
+        html += `
+          <g id="layer_custom_dim_banner">
+            <rect x="140" y="14" width="540" height="28" rx="5" fill="#1f2226" stroke="#ff7a1a" stroke-width="1.5"/>
+            <text x="410" y="32" fill="#ffb066" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" text-anchor="middle">
+              GEOMETRÍA ILUSTRATIVA DE REFERENCIA · MEDIDA PERSONALIZADA A DEFINIR POR WHATSAPP
+            </text>
+          </g>
+        `;
+      }
+
+      // CAPA 7: RUTA Y CAMIÓN CON ACOPLADO DESDE DARREGUEIRA
+      if (quoteState.extras.flete.activo) {
+        const dest = quoteState.extras.flete.localidadDestino.toUpperCase();
+        const km = quoteState.extras.flete.distanciaKm;
+        const trucks = quoteState.computoTecnico.cantidadCamiones;
+        const truckLabel = isCustomDim
+          ? "SEGÚN MEDIDA FINAL"
+          : `${trucks} ${trucks === 1 ? "CAMIÓN C/ACOPLADO" : "CAMIONES C/ACOPLADO"}`;
+
+        html += `
+          <g id="layer7_logistics_route">
+            <rect x="16" y="452" width="788" height="36" rx="6" fill="#1f2226" stroke="#3a3f46" stroke-width="1.2"/>
+            <circle cx="36" cy="470" r="5" fill="#ff7a1a"/>
+            <text x="48" y="474" fill="#eceae6" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700">PLANTA DARREGUEIRA</text>
+            <line x1="185" y1="470" x2="480" y2="470" stroke="#ff7a1a" stroke-width="2.2" class="route-line"/>
+            <g transform="translate(300, 459)">
+              <rect x="-18" y="4" width="16" height="11" rx="1.5" fill="#2a2e33" stroke="#ff7a1a" stroke-width="1.3"/>
+              <line x1="-2" y1="12" x2="2" y2="12" stroke="#ff7a1a" stroke-width="1.5"/>
+              <rect x="2" y="3" width="22" height="12" rx="1.5" fill="#2a2e33" stroke="#ff7a1a" stroke-width="1.5"/>
+              <rect x="24" y="6" width="8" height="9" rx="1" fill="#ff7a1a"/>
+              <circle cx="-13" cy="17" r="2.6" fill="#eceae6"/>
+              <circle cx="-6" cy="17" r="2.6" fill="#eceae6"/>
+              <circle cx="8" cy="17" r="2.6" fill="#eceae6"/>
+              <circle cx="19" cy="17" r="2.6" fill="#eceae6"/>
+              <circle cx="28" cy="17" r="2.6" fill="#eceae6"/>
+            </g>
+            <circle cx="495" cy="470" r="5" fill="#ffb066"/>
+            <text x="507" y="474" fill="#ffb066" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700">${dest} (${km} KM · ${truckLabel})</text>
+          </g>
+        `;
+      }
+
+      svg.innerHTML = html;
+    }
+
+    // RENDERIZADO DE LA INTERFAZ DE PERSIANAS Y OCUPACIÓN POR FACHADA
+    function renderShuttersUI() {
+      const occGrid = document.getElementById("wallOccupationGrid");
+      const listWrap = document.getElementById("shutterInstancesList");
+
+      // 1. Tarjetas de ocupación de las 4 fachadas
+      occGrid.innerHTML = Object.keys(WALL_SPECS).map(wallId => {
+        const wall = WALL_SPECS[wallId];
+        const wallLen = getWallTotalLengthMeters(wallId);
+        const items = getShuttersOnWall(wallId);
+        const usedSpan = computeWallRequiredSpanMeters(items.map(i => i.typeId));
+        const pct = Math.min(100, Math.round((usedSpan / wallLen) * 100));
+
+        return `
+          <div class="wall-occ-pill">
+            <div class="wall-occ-top">
+              <span><strong>${wall.label}</strong> (${wallLen}m)</span>
+              <span>${items.length} uds · ${usedSpan}m / ${wallLen}m</span>
+            </div>
+            <div class="wall-occ-bar">
+              <div class="wall-occ-fill" style="width:${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // 2. Lista de persianas configuradas
+      if (quoteState.extras.persianas.list.length === 0) {
+        listWrap.innerHTML = `
+          <div style="background:var(--bg); border:1px dashed var(--line); border-radius:6px; padding:10px; text-align:center; font-size:0.78rem; color:var(--muted);">
+            No hay persianas cargadas. Utilizá el selector superior para agregar una persiana en la fachada deseada.
+          </div>
+        `;
+        return;
+      }
+
+      listWrap.innerHTML = quoteState.extras.persianas.list.map((item, idx) => {
+        const unitPrice = pricingConfig.persianasEnrollables[item.typeId]?.precioUnitarioInstalada;
+        const priceLabel = unitPrice === null ? "A confirmar" : formatMoney(unitPrice);
+
+        return `
+          <div class="shutter-item-card" data-shutter-uid="${item.uid}">
+            <div>
+              <div class="font-mono" style="font-size:0.65rem; color:var(--spark);">PERSIANA #${idx + 1} · ${priceLabel}</div>
+              <select class="industrial-select" style="margin-top:3px;" onchange="updateShutterInstanceType(${item.uid}, this.value)">
+                ${Object.keys(SHUTTER_SPECS).map(tId => `
+                  <option value="${tId}" ${item.typeId === tId ? "selected" : ""}>${SHUTTER_SPECS[tId].label}</option>
+                `).join("")}
+              </select>
+            </div>
+            <div>
+              <div class="font-mono" style="font-size:0.65rem; color:var(--muted);">FACHADA ASIGNADA</div>
+              <select class="industrial-select" style="margin-top:3px;" onchange="updateShutterInstanceWall(${item.uid}, this.value)">
+                ${Object.keys(WALL_SPECS).map(wId => `
+                  <option value="${wId}" ${item.ubicacion === wId ? "selected" : ""}>${WALL_SPECS[wId].label}</option>
+                `).join("")}
+              </select>
+            </div>
+            <button type="button" class="btn-remove-shutter" onclick="removeShutterInstance(${item.uid})" title="Quitar persiana">
+              ✕ Quitar
+            </button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function populateDestinationsDropdown() {
+      const sel = document.getElementById("selFreightCity");
+      const list = pricingConfig.fleteNacionalDesdeDarregueira.destinosPredefinidosKm;
+      sel.innerHTML = list.map((d, idx) => `
+        <option value="${idx}" ${d.localidad === quoteState.extras.flete.localidadDestino ? "selected" : ""}>
+          ${d.provincia} — ${d.localidad} (${d.km} km)
+        </option>
+      `).join("") + `<option value="custom">Otro destino / Km manual</option>`;
+    }
+
+    function updateUI() {
+      const m2 = quoteState.dimensiones.m2Totales;
+      const W = quoteState.dimensiones.anchoMetros;
+      const L = quoteState.dimensiones.largoMetros;
+      const H = quoteState.dimensiones.altoColumnaMetros;
+      const isGalpon = quoteState.tipoEstructura === "galpon";
+      const wCustom = quoteState.dimensiones.anchoEsPersonalizado;
+      const lCustom = quoteState.dimensiones.largoEsPersonalizado;
+      const isCustomDim = quoteState.cotizacionUSD.hayDimensionPersonalizada;
+
+      const wDisplayStr = wCustom ? "Personalizado" : `${W} m`;
+      const lDisplayStr = lCustom ? "Personalizado" : `${L} m`;
+
+      // Moneda activa
+      document.getElementById("btnCurrUSD").classList.toggle("active", pricingConfig.mostrarPreciosEn === "USD");
+      document.getElementById("btnCurrARS").classList.toggle("active", pricingConfig.mostrarPreciosEn === "ARS");
+
+      // Controles de Ancho y Largo (Sliders + Steppers + Indicador)
+      document.getElementById("sliderWidthIndex").value = quoteState.dimensiones.widthIndex;
+      document.getElementById("lblWidthVal").textContent = wDisplayStr;
+      document.getElementById("btnWidthMinus").disabled = (quoteState.dimensiones.widthIndex <= 0);
+      document.getElementById("btnWidthPlus").disabled = (quoteState.dimensiones.widthIndex >= WIDTH_OPTIONS.length - 1);
+      document.getElementById("boxDimWidth").classList.toggle("custom-selected", wCustom);
+
+      document.getElementById("sliderLengthIndex").value = quoteState.dimensiones.lengthIndex;
+      document.getElementById("lblLengthVal").textContent = lDisplayStr;
+      document.getElementById("btnLengthMinus").disabled = (quoteState.dimensiones.lengthIndex <= 0);
+      document.getElementById("btnLengthPlus").disabled = (quoteState.dimensiones.lengthIndex >= LENGTH_OPTIONS.length - 1);
+      document.getElementById("boxDimLength").classList.toggle("custom-selected", lCustom);
+
+      const alertEl = document.getElementById("customDimAlert");
+      if (isCustomDim) {
+        const pendingParts = [];
+        if (wCustom) pendingParts.push("Ancho personalizado");
+        if (lCustom) pendingParts.push("Largo personalizado");
+        alertEl.classList.add("show");
+        alertEl.innerHTML = `<strong>COTIZACIÓN PARTICULAR POR WHATSAPP:</strong> Seleccionaste <strong>${pendingParts.join(" y ")}</strong>. El presupuesto final de esta estructura queda pendiente de revisión comercial técnica. El visor 3D muestra una geometría ilustrativa de referencia.`;
+        document.getElementById("lblResultingM2").textContent = `A definir (${wCustom ? "Ancho Pers." : W + "m"} × ${lCustom ? "Largo Pers." : L + "m"})`;
+      } else {
+        alertEl.classList.remove("show");
+        alertEl.innerHTML = "";
+        document.getElementById("lblResultingM2").textContent = `${m2} m² (${W}m × ${L}m)`;
+      }
+
+      // Badges superiores del visor 3D
+      document.getElementById("hudStructureBadge").textContent = isCustomDim
+        ? `${isGalpon ? "GALPÓN CERRADO" : "TINGLADO ABIERTO"} · MEDIDA PERSONALIZADA`
+        : `${isGalpon ? "GALPÓN CERRADO" : "TINGLADO ABIERTO"} · ${m2} m² (${W}×${L}×${H}m)`;
+
+      const slabHud = document.getElementById("hudSlabBadge");
+      if (isGalpon && quoteState.extras.hormigonado.activo) {
+        slabHud.style.display = "inline-flex";
+        slabHud.textContent = isCustomDim
+          ? `HORMIGÓN ${quoteState.extras.hormigonado.espesorId.toUpperCase()} (A definir)`
+          : `HORMIGÓN ${quoteState.extras.hormigonado.espesorId.toUpperCase()} (${quoteState.computoTecnico.volumenHormigonM3} m³)`;
+      } else {
+        slabHud.style.display = "none";
+      }
+
+      const freightHud = document.getElementById("hudFreightBadge");
+      if (quoteState.extras.flete.activo) {
+        freightHud.style.display = "inline-flex";
+        freightHud.textContent = `DARREGUEIRA → ${quoteState.extras.flete.localidadDestino.toUpperCase()} (${quoteState.extras.flete.distanciaKm} KM)`;
+      } else {
+        freightHud.style.display = "none";
+      }
+
+      // Barra de Cómputo Métrico (BOM)
+      document.getElementById("bomM2").textContent = isCustomDim ? "A definir" : `${m2} m²`;
+      document.getElementById("bomPorticos").textContent = lCustom ? "A definir" : `${quoteState.computoTecnico.cantidadPorticos} Uds.`;
+      document.getElementById("bomLeds").textContent = quoteState.extras.luminaria.activo ? `${quoteState.extras.luminaria.cantidadUnidades} Uds.` : "0 Uds.";
+      document.getElementById("bomConcrete").textContent = (isCustomDim && quoteState.extras.hormigonado.igualarM2Techo)
+        ? "A definir"
+        : `${quoteState.computoTecnico.volumenHormigonM3} m³`;
+      document.getElementById("bomMesh").textContent = (isCustomDim && quoteState.extras.hormigonado.igualarM2Techo)
+        ? "A definir"
+        : `${quoteState.computoTecnico.cantidadMallasSima} Uds.`;
+      document.getElementById("bomTrucks").textContent = quoteState.extras.flete.activo
+        ? (isCustomDim ? "A confirmar" : `${quoteState.computoTecnico.cantidadCamiones} ${quoteState.computoTecnico.cantidadCamiones === 1 ? "Camión" : "Camiones"}`)
+        : "En Planta";
+
+      // Botones Tipología Estructura
+      document.getElementById("btnTypeTinglado").classList.toggle("active", !isGalpon);
+      document.getElementById("btnTypeGalpon").classList.toggle("active", isGalpon);
+      document.getElementById("lblRateTinglado").textContent = `${formatMoney(pricingConfig.estructuraBaseM2.tinglado.precioBaseM2)}/m²`;
+      document.getElementById("lblRateGalpon").textContent = `${formatMoney(pricingConfig.estructuraBaseM2.galpon.precioBaseM2)}/m²`;
+
+      // Etiqueta de bonificación por escala
+      const scaleBadge = document.getElementById("scaleDiscountBadge");
+      const d1000 = Math.round((pricingConfig.estructuraBaseM2.descuentoEscala1000m2 ?? 0.07) * 100);
+      const d500 = Math.round((pricingConfig.estructuraBaseM2.descuentoEscala500m2 ?? 0.04) * 100);
+      if (!isCustomDim && m2 >= 1000 && d1000 > 0) {
+        scaleBadge.style.display = "inline-flex";
+        scaleBadge.textContent = `BONIFICACIÓN ESCALA INDUSTRIAL -${d1000}%`;
+      } else if (!isCustomDim && m2 >= 500 && d500 > 0) {
+        scaleBadge.style.display = "inline-flex";
+        scaleBadge.textContent = `BONIFICACIÓN ESCALA INDUSTRIAL -${d500}%`;
+      } else {
+        scaleBadge.style.display = "none";
+      }
+
+      // Altura libre de columna
+      document.getElementById("lblHeightSelected").textContent = `${H.toFixed(1)} m`;
+      document.getElementById("btnHeight45").classList.toggle("active", H === 4.5);
+      document.getElementById("btnHeight55").classList.toggle("active", H === 5.5);
+      document.getElementById("btnHeight70").classList.toggle("active", H === 7.0);
+
+      // Extra 1: Luminaria LED
+      document.getElementById("chkLuminaria").checked = quoteState.extras.luminaria.activo;
+      document.getElementById("bodyLuminaria").style.display = quoteState.extras.luminaria.activo ? "block" : "none";
+      document.getElementById("cardLuminaria").classList.toggle("active-card", quoteState.extras.luminaria.activo);
+      document.getElementById("btnLed36").classList.toggle("active", quoteState.extras.luminaria.nivelEstandar === "estandar_36m2");
+      document.getElementById("btnLed25").classList.toggle("active", quoteState.extras.luminaria.nivelEstandar === "taller_25m2");
+      document.getElementById("lblLedQty").textContent = quoteState.extras.luminaria.cantidadUnidades;
+      const ledUnitVal = quoteState.extras.luminaria.nivelEstandar === "taller_25m2"
+        ? pricingConfig.luminariaLED.campana200W_taller_25m2.precioUnitarioInstalada
+        : pricingConfig.luminariaLED.campana150W_estandar_36m2.precioUnitarioInstalada;
+      document.getElementById("lblLedUnitCost").textContent = ledUnitVal === null ? "A confirmar" : `${formatMoney(ledUnitVal)} c/u instalada`;
+
+      // Visibilidad de bloques exclusivos de Galpón
+      document.getElementById("tingladoNotice").style.display = isGalpon ? "none" : "block";
+      ["cardElectricidad", "cardHormigon", "cardPersianas"].forEach(id => {
+        document.getElementById(id).style.display = isGalpon ? "block" : "none";
+      });
+
+      // Extra 2: Electricidad
+      document.getElementById("chkElectricidad").checked = quoteState.extras.electricidad.activo;
+      document.getElementById("bodyElectricidad").style.display = quoteState.extras.electricidad.activo ? "grid" : "none";
+      document.getElementById("cardElectricidad").classList.toggle("active-card", quoteState.extras.electricidad.activo);
+      document.getElementById("btnPhaseMono").classList.toggle("active", quoteState.extras.electricidad.fase === "monofasica");
+      document.getElementById("btnPhaseBi").classList.toggle("active", quoteState.extras.electricidad.fase === "bifasica");
+      document.getElementById("btnPhaseTri").classList.toggle("active", quoteState.extras.electricidad.fase === "trifasica");
+
+      // Extra 3: Hormigonado
+      document.getElementById("chkHormigon").checked = quoteState.extras.hormigonado.activo;
+      document.getElementById("bodyHormigon").style.display = quoteState.extras.hormigonado.activo ? "block" : "none";
+      document.getElementById("cardHormigon").classList.toggle("active-card", quoteState.extras.hormigonado.activo);
+      ["10", "12", "15", "20"].forEach(cm => {
+        const key = cm + "cm";
+        document.getElementById("btnSlab" + cm).classList.toggle("active", quoteState.extras.hormigonado.espesorId === key);
+        const rate = pricingConfig.hormigonadoM2[key].precioM2LlaveEnMano;
+        document.getElementById("lblRateSlab" + cm).textContent = rate === null ? "A confirmar" : `${formatMoney(rate)}/m²`;
+      });
+      document.getElementById("lblSlabSyncM2").textContent = isCustomDim ? "según medida final" : `${m2} m²`;
+      document.getElementById("chkSyncSlabM2").checked = quoteState.extras.hormigonado.igualarM2Techo;
+      document.getElementById("customSlabInputWrap").style.display = quoteState.extras.hormigonado.igualarM2Techo ? "none" : "flex";
+      document.getElementById("inpCustomSlabM2").value = quoteState.extras.hormigonado.m2Personalizados;
+
+      // Extra 4: Persianas Enrollables
+      document.getElementById("chkPersianas").checked = quoteState.extras.persianas.activo;
+      document.getElementById("bodyPersianas").style.display = quoteState.extras.persianas.activo ? "block" : "none";
+      document.getElementById("cardPersianas").classList.toggle("active-card", quoteState.extras.persianas.activo);
+      renderShuttersUI();
+
+      // Módulo 5: Logística desde Darregueira
+      document.getElementById("chkFlete").checked = quoteState.extras.flete.activo;
+      document.getElementById("bodyFlete").style.display = quoteState.extras.flete.activo ? "block" : "none";
+      document.getElementById("cardFlete").classList.toggle("active-card", quoteState.extras.flete.activo);
+      document.getElementById("inpDistanciaKm").value = quoteState.extras.flete.distanciaKm;
+      document.getElementById("sliderDistanciaKm").value = quoteState.extras.flete.distanciaKm;
+      document.getElementById("lblFreightRingInfo").textContent = isCustomDim
+        ? `${quoteState.computoTecnico.zonaFleteNombre} · Camiones sujetos a medida personalizada`
+        : `${quoteState.computoTecnico.zonaFleteNombre} · ${quoteState.computoTecnico.cantidadCamiones} ${quoteState.computoTecnico.cantidadCamiones === 1 ? "Camión con acoplado" : "Camiones con acoplado"}`;
+      document.getElementById("lblFreightSubtotal").textContent = formatMoney(quoteState.cotizacionUSD.subtotalFlete);
+
+      // Panel de Salida (.calc-out)
+      document.getElementById("lblSummarySpec").textContent = isCustomDim
+        ? `${isGalpon ? "Galpón Cerrado" : "Tinglado Abierto"} (${wDisplayStr} × ${lDisplayStr} × ${H}m)`
+        : `${isGalpon ? "Galpón Cerrado" : "Tinglado Abierto"} ${m2} m² (${W}×${L}×${H}m) · ${quoteState.computoTecnico.cantidadPorticos} Pórticos`;
+
+      document.getElementById("lblActiveModeTag").textContent = isCustomDim ? "COTIZACIÓN A MEDIDA" : "MEDIDA MODULAR ESTÁNDAR";
+
+      const margenPct = Math.round((pricingConfig.margenRangoPorcentaje ?? 0.10) * 100);
+      if (pricingConfig.ocultarPrecioTotalAlPublico) {
+        document.getElementById("outTotalMain").textContent = "A CONFIRMAR";
+        document.getElementById("outRangeSub").textContent = "Solicite cotización oficial personalizada por WhatsApp";
+        document.getElementById("outMobileTotal").textContent = "A CONFIRMAR";
+      } else if (isCustomDim) {
+        document.getElementById("outTotalMain").textContent = "COTIZACIÓN A MEDIDA";
+        document.getElementById("outRangeSub").textContent = "Presupuesto pendiente de revisión comercial según dimensión personalizada";
+        document.getElementById("outMobileTotal").textContent = "A MEDIDA";
+      } else {
+        const suffix = quoteState.cotizacionUSD.hayItemsAConfirmar ? " + Ítems a conf." : "";
+        document.getElementById("outTotalMain").textContent = formatMoney(quoteState.cotizacionUSD.totalEstimado) + suffix;
+        document.getElementById("outRangeSub").textContent = `Rango estimado (±${margenPct}%): ${formatMoney(quoteState.cotizacionUSD.rangoMin)} – ${formatMoney(quoteState.cotizacionUSD.rangoMax)}`;
+        document.getElementById("outMobileTotal").textContent = `${formatMoney(quoteState.cotizacionUSD.rangoMin)} – ${formatMoney(quoteState.cotizacionUSD.rangoMax)}`;
+      }
+
+      // Filas de desglose
+      document.getElementById("brkLblEstructura").textContent = isCustomDim
+        ? `1. Estructura (${isGalpon ? "Galpón" : "Tinglado"} ${wDisplayStr} × ${lDisplayStr})`
+        : `1. Estructura (${isGalpon ? "Galpón" : "Tinglado"} ${m2} m²)`;
+      document.getElementById("brkValEstructura").textContent = formatMoney(quoteState.cotizacionUSD.subtotalEstructura);
+
+      document.getElementById("brkLblLuminaria").textContent = quoteState.extras.luminaria.activo
+        ? `2. Luminaria Industrial LED (${quoteState.extras.luminaria.cantidadUnidades} campanas)`
+        : "2. Luminaria Industrial LED (No incluida)";
+      document.getElementById("brkValLuminaria").textContent = formatMoney(quoteState.cotizacionUSD.subtotalLuminaria);
+
+      document.getElementById("brkLblElectricidad").textContent = (isGalpon && quoteState.extras.electricidad.activo)
+        ? `3. Instalación Eléctrica (${quoteState.extras.electricidad.fase.toUpperCase()})`
+        : "3. Instalación Eléctrica (No incluida)";
+      document.getElementById("brkValElectricidad").textContent = formatMoney(quoteState.cotizacionUSD.subtotalElectricidad);
+
+      document.getElementById("brkLblHormigon").textContent = (isGalpon && quoteState.extras.hormigonado.activo)
+        ? (isCustomDim && quoteState.extras.hormigonado.igualarM2Techo
+            ? `4. Piso Hormigón ${quoteState.extras.hormigonado.espesorId} (Superficie a definir)`
+            : `4. Piso Hormigón ${quoteState.extras.hormigonado.espesorId} (${quoteState.extras.hormigonado.m2Personalizados} m² · ${quoteState.computoTecnico.volumenHormigonM3} m³)`)
+        : "4. Piso de Hormigón (Sin piso)";
+      document.getElementById("brkValHormigon").textContent = formatMoney(quoteState.cotizacionUSD.subtotalHormigon);
+
+      document.getElementById("brkLblPersianas").textContent = (isGalpon && quoteState.extras.persianas.activo && quoteState.computoTecnico.totalPersianasUnidades > 0)
+        ? `5. Persianas Motorizadas (${quoteState.computoTecnico.totalPersianasUnidades} Uds.)`
+        : "5. Persianas Motorizadas (Sin portones)";
+      document.getElementById("brkValPersianas").textContent = formatMoney(quoteState.cotizacionUSD.subtotalPersianas);
+
+      document.getElementById("brkLblFlete").textContent = quoteState.extras.flete.activo
+        ? `6. Flete Propio (${quoteState.extras.flete.localidadDestino} · ${quoteState.extras.flete.distanciaKm} km)`
+        : "6. Flete (Retiro / A coordinar)";
+      document.getElementById("brkValFlete").textContent = formatMoney(quoteState.cotizacionUSD.subtotalFlete);
+    }
+
+    function recalculateAndRender() {
+      computeMetricsAndCosts();
+      updateUI();
+      renderIsometricSVG();
+    }
+
+    // HANDLERS DE INTERACCIÓN DEL USUARIO
+    function setCurrency(curr) {
+      pricingConfig.mostrarPreciosEn = curr;
+      recalculateAndRender();
+    }
+
+    function toggleRoofStyle() {
+      quoteState.roofStyle = quoteState.roofStyle === "dos_aguas" ? "parabolico" : "dos_aguas";
+      document.getElementById("btnRoofStyle").textContent = quoteState.roofStyle === "parabolico" ? "Techo: Parabólico" : "Techo: 2 Aguas";
+      renderIsometricSVG();
+    }
+
+    function toggleCutaway() {
+      quoteState.cutawayView = !quoteState.cutawayView;
+      const btn = document.getElementById("btnCutaway");
+      btn.classList.toggle("active", quoteState.cutawayView);
+      btn.textContent = quoteState.cutawayView ? "Corte 3D: ON" : "Corte 3D: OFF";
+      renderIsometricSVG();
+    }
+
+    function setStructureType(type) {
+      quoteState.tipoEstructura = type;
+      if (type === "galpon" && !quoteState.extras.hormigonado.activo) {
+        quoteState.extras.hormigonado.activo = true;
+      }
+      recalculateAndRender();
+    }
+
+    // Controles de Ancho y Largo por índice de opciones estándar + Personalizado
+    function onWidthSliderInput(idx) {
+      const parsed = Math.max(0, Math.min(WIDTH_OPTIONS.length - 1, Number(idx)));
+      quoteState.dimensiones.widthIndex = parsed;
+      quoteState.extras.luminaria.manualOverride = false;
+      recalculateAndRender();
+    }
+
+    function stepWidth(delta) {
+      const next = Math.max(0, Math.min(WIDTH_OPTIONS.length - 1, quoteState.dimensiones.widthIndex + delta));
+      quoteState.dimensiones.widthIndex = next;
+      quoteState.extras.luminaria.manualOverride = false;
+      recalculateAndRender();
+    }
+
+    function onLengthSliderInput(idx) {
+      const parsed = Math.max(0, Math.min(LENGTH_OPTIONS.length - 1, Number(idx)));
+      quoteState.dimensiones.lengthIndex = parsed;
+      quoteState.extras.luminaria.manualOverride = false;
+      recalculateAndRender();
+    }
+
+    function stepLength(delta) {
+      const next = Math.max(0, Math.min(LENGTH_OPTIONS.length - 1, quoteState.dimensiones.lengthIndex + delta));
+      quoteState.dimensiones.lengthIndex = next;
+      quoteState.extras.luminaria.manualOverride = false;
+      recalculateAndRender();
+    }
+
+    function setColumnHeight(h) {
+      quoteState.dimensiones.altoColumnaMetros = h;
+      recalculateAndRender();
+    }
+
+    function toggleLuminaria(checked) {
+      quoteState.extras.luminaria.activo = checked;
+      recalculateAndRender();
+    }
+
+    function setLedLevel(level) {
+      quoteState.extras.luminaria.nivelEstandar = level;
+      quoteState.extras.luminaria.manualOverride = false;
+      recalculateAndRender();
+    }
+
+    function adjustLedCount(delta) {
+      quoteState.extras.luminaria.manualOverride = true;
+      quoteState.extras.luminaria.cantidadUnidades = Math.max(1, Math.min(80, quoteState.extras.luminaria.cantidadUnidades + delta));
+      recalculateAndRender();
+    }
+
+    function toggleElectricidad(checked) {
+      quoteState.extras.electricidad.activo = checked;
+      recalculateAndRender();
+    }
+
+    function setElectricPhase(phase) {
+      quoteState.extras.electricidad.fase = phase;
+      recalculateAndRender();
+    }
+
+    function toggleHormigon(checked) {
+      quoteState.extras.hormigonado.activo = checked;
+      recalculateAndRender();
+    }
+
+    function setSlabThickness(id) {
+      quoteState.extras.hormigonado.espesorId = id;
+      recalculateAndRender();
+    }
+
+    function toggleCustomSlabM2(equalToRoof) {
+      quoteState.extras.hormigonado.igualarM2Techo = equalToRoof;
+      recalculateAndRender();
+    }
+
+    function onCustomSlabM2Input(val) {
+      quoteState.extras.hormigonado.m2Personalizados = Math.max(20, Number(val) || 0);
+      recalculateAndRender();
+    }
+
+    function togglePersianas(checked) {
+      quoteState.extras.persianas.activo = checked;
+      recalculateAndRender();
+    }
+
+    // Gestión de Persianas Individuales con Validación de Longitud Disponible de Fachada
+    function addShutterFromUI() {
+      const typeId = document.getElementById("selNewShutterType").value;
+      const wallId = document.getElementById("selNewShutterWall").value;
+      const existingOnWall = getShuttersOnWall(wallId).map(i => i.typeId);
+      const candidateTypes = [...existingOnWall, typeId];
+      const check = canWallFitShutters(wallId, candidateTypes);
+
+      if (!check.fits) {
+        const wallName = WALL_SPECS[wallId]?.label || wallId;
+        showRuleToast(
+          `<strong>ESPACIO INSUFICIENTE EN ${wallName.toUpperCase()}:</strong> No hay espacio suficiente en esta fachada (${check.available} m) para agregar otra persiana de este tamaño (requiere ${check.required} m incluyendo márgenes). Cambiá su medida, elegí otra pared o quitá una persiana existente.`
+        );
+        return;
+      }
+
+      quoteState.extras.persianas.list.push({
+        uid: quoteState.extras.persianas.nextInstanceId++,
+        typeId,
+        ubicacion: wallId
+      });
+      recalculateAndRender();
+    }
+
+    function updateShutterInstanceType(uid, newTypeId) {
+      const item = quoteState.extras.persianas.list.find(i => i.uid === uid);
+      if (!item) return;
+
+      const othersOnWall = getShuttersOnWall(item.ubicacion, uid).map(i => i.typeId);
+      const candidateTypes = [...othersOnWall, newTypeId];
+      const check = canWallFitShutters(item.ubicacion, candidateTypes);
+
+      if (!check.fits) {
+        const wallName = WALL_SPECS[item.ubicacion]?.label || item.ubicacion;
+        showRuleToast(
+          `<strong>ESPACIO INSUFICIENTE EN ${wallName.toUpperCase()}:</strong> No hay espacio suficiente en esta fachada (${check.available} m) para cambiar a esa medida (requiere ${check.required} m). Elegí otra pared o quitá una persiana existente.`
+        );
+        renderShuttersUI();
+        return;
+      }
+
+      item.typeId = newTypeId;
+      recalculateAndRender();
+    }
+
+    function updateShutterInstanceWall(uid, newWallId) {
+      const item = quoteState.extras.persianas.list.find(i => i.uid === uid);
+      if (!item) return;
+
+      const othersOnTargetWall = getShuttersOnWall(newWallId, uid).map(i => i.typeId);
+      const candidateTypes = [...othersOnTargetWall, item.typeId];
+      const check = canWallFitShutters(newWallId, candidateTypes);
+
+      if (!check.fits) {
+        const wallName = WALL_SPECS[newWallId]?.label || newWallId;
+        showRuleToast(
+          `<strong>ESPACIO INSUFICIENTE EN ${wallName.toUpperCase()}:</strong> No hay espacio suficiente en la fachada ${wallName} (${check.available} m) para ubicar esta persiana (requiere ${check.required} m).`
+        );
+        renderShuttersUI();
+        return;
+      }
+
+      item.ubicacion = newWallId;
+      recalculateAndRender();
+    }
+
+    function removeShutterInstance(uid) {
+      quoteState.extras.persianas.list = quoteState.extras.persianas.list.filter(i => i.uid !== uid);
+      recalculateAndRender();
+    }
+
+    function toggleFlete(checked) {
+      quoteState.extras.flete.activo = checked;
+      recalculateAndRender();
+    }
+
+    function selectFreightPreset(cityName, km) {
+      quoteState.extras.flete.activo = true;
+      quoteState.extras.flete.localidadDestino = cityName;
+      quoteState.extras.flete.distanciaKm = km;
+      populateDestinationsDropdown();
+      recalculateAndRender();
+    }
+
+    function onFreightDropdownChange(idx) {
+      if (idx === "custom") return;
+      const dest = pricingConfig.fleteNacionalDesdeDarregueira.destinosPredefinidosKm[Number(idx)];
+      if (dest) {
+        quoteState.extras.flete.localidadDestino = dest.localidad;
+        quoteState.extras.flete.distanciaKm = dest.km;
+        recalculateAndRender();
+      }
+    }
+
+    function onDistanceKmInput(val) {
+      quoteState.extras.flete.distanciaKm = Math.max(0, Math.min(2500, Number(val) || 0));
+      recalculateAndRender();
+    }
+
+    // CIERRE Y ENVÍO DE FICHA TÉCNICA POR WHATSAPP
+    function buildWhatsAppMessageLines() {
+      const m2 = quoteState.dimensiones.m2Totales;
+      const W = quoteState.dimensiones.anchoMetros;
+      const L = quoteState.dimensiones.largoMetros;
+      const H = quoteState.dimensiones.altoColumnaMetros;
+      const isGalpon = quoteState.tipoEstructura === "galpon";
+      const wCustom = quoteState.dimensiones.anchoEsPersonalizado;
+      const lCustom = quoteState.dimensiones.largoEsPersonalizado;
+      const isCustomDim = quoteState.cotizacionUSD.hayDimensionPersonalizada;
+      const clientNote = document.getElementById("inpClientLocation").value.trim() || quoteState.extras.flete.localidadDestino;
+
+      const shutterSummary = (isGalpon && quoteState.extras.persianas.activo && quoteState.extras.persianas.list.length > 0)
+        ? quoteState.extras.persianas.list
+            .map((it, idx) => `#${idx + 1} ${SHUTTER_SPECS[it.typeId]?.shortLabel || it.typeId} en ${WALL_SPECS[it.ubicacion]?.label || it.ubicacion}`)
+            .join(", ")
+        : (isGalpon ? "Sin persianas" : "No aplica");
+
+      const slabSummary = (isGalpon && quoteState.extras.hormigonado.activo)
+        ? (isCustomDim && quoteState.extras.hormigonado.igualarM2Techo
+            ? `${quoteState.extras.hormigonado.espesorId} (Superficie sujeta a medida personalizada)`
+            : `${quoteState.extras.hormigonado.espesorId} (${quoteState.extras.hormigonado.m2Personalizados} m² · ${quoteState.computoTecnico.volumenHormigonM3} m³ + ${quoteState.computoTecnico.cantidadMallasSima} mallas SIMA)`)
+        : "Sin piso de hormigón";
+
+      const elecSummary = (isGalpon && quoteState.extras.electricidad.activo)
+        ? `Kit ${quoteState.extras.electricidad.fase.toUpperCase()}`
+        : "Sin instalación eléctrica";
+
+      const ledSummary = quoteState.extras.luminaria.activo
+        ? `${quoteState.extras.luminaria.cantidadUnidades} Campanas LED (${quoteState.extras.luminaria.nivelEstandar === "taller_25m2" ? "200W Taller" : "150W Depósito"})`
+        : "Sin luminarias";
+
+      const fleteSummary = quoteState.extras.flete.activo
+        ? (isCustomDim
+            ? `${quoteState.extras.flete.localidadDestino} (${quoteState.extras.flete.distanciaKm} km desde Planta Darregueira · Camiones a confirmar según medida final)`
+            : `${quoteState.extras.flete.localidadDestino} (${quoteState.extras.flete.distanciaKm} km desde Planta Darregueira · ${quoteState.computoTecnico.cantidadCamiones} camión/es con acoplado)`)
+        : "Retiro en Planta Darregueira";
+
+      const estructuraLine = isCustomDim
+        ? `${isGalpon ? "Galpón Metálico" : "Tinglado Abierto"} — Ancho: ${wCustom ? "PERSONALIZADO (A definir)" : W + "m"} × Largo: ${lCustom ? "PERSONALIZADO (A definir)" : L + "m"} × Alto: ${H}m (Cubierta: ${quoteState.roofStyle === "parabolico" ? "Parabólica" : "A Dos Aguas"})`
+        : `${isGalpon ? "Galpón Metálico" : "Tinglado Abierto"} de ${m2} m² (${W}m ancho × ${L}m largo × ${H}m alto — ${quoteState.computoTecnico.cantidadPorticos} pórticos · Cubierta: ${quoteState.roofStyle === "parabolico" ? "Parabólica" : "A Dos Aguas"})`;
+
+      const margenPct = Math.round((pricingConfig.margenRangoPorcentaje ?? 0.10) * 100);
+      const inversionStr = (pricingConfig.ocultarPrecioTotalAlPublico || isCustomDim)
+        ? "Pendiente de revisión comercial (configuración con dimensión personalizada / a confirmar)"
+        : `${formatMoney(quoteState.cotizacionUSD.rangoMin)} – ${formatMoney(quoteState.cotizacionUSD.rangoMax)} (Rango ±${margenPct}%)`;
+
+      return [
+        "Hola Metalúrgica AlmaFuerte! Configuré mi estructura en el cotizador 3D:",
+        `• *Estructura:* ${estructuraLine}`,
+        `• *Piso de Hormigón:* ${slabSummary}`,
+        `• *Accesos:* ${shutterSummary}`,
+        `• *Electricidad e Iluminación:* ${elecSummary} + ${ledSummary}`,
+        `• *Logística:* ${fleteSummary}`,
+        `• *Inversión estimada en web:* ${inversionStr}`,
+        `• *Cliente / Localidad:* ${clientNote}`,
+        "Me gustaría recibir el presupuesto oficial detallado."
+      ];
+    }
+
+    function sendWhatsAppQuote() {
+      const lines = buildWhatsAppMessageLines();
+      const text = encodeURIComponent(lines.join("\n"));
+      const phone = pricingConfig.whatsappComercial || "5492924000000";
+      window.open(`https://wa.me/${phone}?text=${text}`, "_blank");
+    }
+
+    // Inicialización general del cotizador
+    window.addEventListener("DOMContentLoaded", () => {
+      populateDestinationsDropdown();
+      recalculateAndRender();
+    });
+  </script>
+
+  <script id="adminOnlyScript" data-admin-only="true">
+    // Cargar configuración guardada localmente en la herramienta privada de administración
+    (function loadSavedAdminConfig() {
+      try {
+        const saved = localStorage.getItem("almafuerte_pricing_config");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          pricingConfig = Object.assign({}, DEFAULT_PRICING_CONFIG, parsed);
+        }
+      } catch (err) {
+        console.warn("No se pudo leer localStorage en modo privado:", err);
+      }
+    })();
+
+    function populateAdminFormFromConfig() {
+      document.getElementById("adm_whatsapp").value = pricingConfig.whatsappComercial;
+      document.getElementById("adm_tc").value = pricingConfig.tipoCambioARS;
+      document.getElementById("adm_tinglado_m2").value = pricingConfig.estructuraBaseM2.tinglado.precioBaseM2;
+      document.getElementById("adm_galpon_m2").value = pricingConfig.estructuraBaseM2.galpon.precioBaseM2;
+
+      document.getElementById("adm_rec55_ting").value = Number(((pricingConfig.estructuraBaseM2.tinglado.recargoAltura55mPorcentaje ?? 0.06) * 100).toFixed(2));
+      document.getElementById("adm_rec55_galp").value = Number(((pricingConfig.estructuraBaseM2.galpon.recargoAltura55mPorcentaje ?? 0.08) * 100).toFixed(2));
+      document.getElementById("adm_rec70_ting").value = Number(((pricingConfig.estructuraBaseM2.tinglado.recargoAltura70mPorcentaje ?? 0.14) * 100).toFixed(2));
+      document.getElementById("adm_rec70_galp").value = Number(((pricingConfig.estructuraBaseM2.galpon.recargoAltura70mPorcentaje ?? 0.18) * 100).toFixed(2));
+
+      document.getElementById("adm_desc500").value = Number(((pricingConfig.estructuraBaseM2.descuentoEscala500m2 ?? 0.04) * 100).toFixed(2));
+      document.getElementById("adm_desc1000").value = Number(((pricingConfig.estructuraBaseM2.descuentoEscala1000m2 ?? 0.07) * 100).toFixed(2));
+      document.getElementById("adm_margen_rango").value = Number(((pricingConfig.margenRangoPorcentaje ?? 0.10) * 100).toFixed(2));
+      document.getElementById("adm_hide_total").checked = Boolean(pricingConfig.ocultarPrecioTotalAlPublico);
+
+      const setFieldOrNull = (valInputId, chkNullId, currentVal, fallbackVal) => {
+        const isNull = currentVal === null;
+        document.getElementById(chkNullId).checked = isNull;
+        document.getElementById(valInputId).value = isNull ? fallbackVal : currentVal;
+      };
+
+      setFieldOrNull("adm_led150", "null_led150", pricingConfig.luminariaLED.campana150W_estandar_36m2.precioUnitarioInstalada, 145);
+      setFieldOrNull("adm_led200", "null_led200", pricingConfig.luminariaLED.campana200W_taller_25m2.precioUnitarioInstalada, 185);
+      setFieldOrNull("adm_elec_mono", "null_elec_mono", pricingConfig.electricidadPorFase.monofasica.cargoFijoTablero, 650);
+      setFieldOrNull("adm_elec_bi", "null_elec_bi", pricingConfig.electricidadPorFase.bifasica.cargoFijoTablero, 950);
+      setFieldOrNull("adm_elec_tri", "null_elec_tri", pricingConfig.electricidadPorFase.trifasica.cargoFijoTablero, 1600);
+
+      document.getElementById("adm_elec_mono_m2").value = pricingConfig.electricidadPorFase.monofasica.adicionalPorM2Tendido ?? 4.5;
+      document.getElementById("adm_elec_bi_m2").value = pricingConfig.electricidadPorFase.bifasica.adicionalPorM2Tendido ?? 6.0;
+      document.getElementById("adm_elec_tri_m2").value = pricingConfig.electricidadPorFase.trifasica.adicionalPorM2Tendido ?? 9.5;
+
+      setFieldOrNull("adm_slab10", "null_slab10", pricingConfig.hormigonadoM2["10cm"].precioM2LlaveEnMano, 34);
+      setFieldOrNull("adm_slab12", "null_slab12", pricingConfig.hormigonadoM2["12cm"].precioM2LlaveEnMano, 41);
+      setFieldOrNull("adm_slab15", "null_slab15", pricingConfig.hormigonadoM2["15cm"].precioM2LlaveEnMano, 52);
+      setFieldOrNull("adm_slab20", "null_slab20", pricingConfig.hormigonadoM2["20cm"].precioM2LlaveEnMano, 68);
+
+      setFieldOrNull("adm_porton35", "null_porton35", pricingConfig.persianasEnrollables.porton_35x35.precioUnitarioInstalada, 2100);
+      setFieldOrNull("adm_porton45", "null_porton45", pricingConfig.persianasEnrollables.porton_45x45.precioUnitarioInstalada, 3150);
+      setFieldOrNull("adm_porton50", "null_porton50", pricingConfig.persianasEnrollables.porton_50x50.precioUnitarioInstalada, 4100);
+
+      document.getElementById("adm_cap_ting").value = pricingConfig.fleteNacionalDesdeDarregueira.m2PorCamionTinglado ?? 800;
+      document.getElementById("adm_cap_galp").value = pricingConfig.fleteNacionalDesdeDarregueira.m2PorCamionGalpon ?? 600;
+      document.getElementById("adm_flete_local").value = pricingConfig.fleteNacionalDesdeDarregueira.cargoFijoZonaLocalUSD ?? 180;
+      document.getElementById("adm_flete_bajada").value = pricingConfig.fleteNacionalDesdeDarregueira.bajadaBanderaPorCamionUSD ?? 150;
+      document.getElementById("adm_km_z1").value = pricingConfig.fleteNacionalDesdeDarregueira.tarifaKmZona1RegionalUSD;
+      document.getElementById("adm_km_z2").value = pricingConfig.fleteNacionalDesdeDarregueira.tarifaKmZona2MediaUSD;
+      document.getElementById("adm_km_z3").value = pricingConfig.fleteNacionalDesdeDarregueira.tarifaKmZona3LargaUSD;
+    }
+
+    function openAdminModal() {
+      populateAdminFormFromConfig();
+      document.getElementById("adminModal").classList.add("open");
+    }
+
+    function closeAdminModal() {
+      document.getElementById("adminModal").classList.remove("open");
+    }
+
+    function collectAdminFormIntoConfig() {
+      pricingConfig.ultimaActualizacion = new Date().toISOString();
+      pricingConfig.whatsappComercial = document.getElementById("adm_whatsapp").value.trim() || "5492924000000";
+      pricingConfig.tipoCambioARS = Number(document.getElementById("adm_tc").value) || 1200;
+      pricingConfig.estructuraBaseM2.tinglado.precioBaseM2 = Number(document.getElementById("adm_tinglado_m2").value) || 80;
+      pricingConfig.estructuraBaseM2.galpon.precioBaseM2 = Number(document.getElementById("adm_galpon_m2").value) || 110;
+
+      const numOrDefault = (id, defVal) => {
+        const v = parseFloat(document.getElementById(id).value);
+        return Number.isNaN(v) ? defVal : v;
+      };
+
+      pricingConfig.estructuraBaseM2.tinglado.recargoAltura55mPorcentaje = Number((numOrDefault("adm_rec55_ting", 6) / 100).toFixed(4));
+      pricingConfig.estructuraBaseM2.galpon.recargoAltura55mPorcentaje = Number((numOrDefault("adm_rec55_galp", 8) / 100).toFixed(4));
+      pricingConfig.estructuraBaseM2.tinglado.recargoAltura70mPorcentaje = Number((numOrDefault("adm_rec70_ting", 14) / 100).toFixed(4));
+      pricingConfig.estructuraBaseM2.galpon.recargoAltura70mPorcentaje = Number((numOrDefault("adm_rec70_galp", 18) / 100).toFixed(4));
+
+      pricingConfig.estructuraBaseM2.descuentoEscala500m2 = Number((numOrDefault("adm_desc500", 4) / 100).toFixed(4));
+      pricingConfig.estructuraBaseM2.descuentoEscala1000m2 = Number((numOrDefault("adm_desc1000", 7) / 100).toFixed(4));
+      pricingConfig.margenRangoPorcentaje = Number((numOrDefault("adm_margen_rango", 10) / 100).toFixed(4));
+      pricingConfig.ocultarPrecioTotalAlPublico = document.getElementById("adm_hide_total").checked;
+
+      const getValOrNull = (valInputId, chkNullId) => {
+        if (document.getElementById(chkNullId).checked) return null;
+        return Number(document.getElementById(valInputId).value) || 0;
+      };
+
+      pricingConfig.luminariaLED.campana150W_estandar_36m2.precioUnitarioInstalada = getValOrNull("adm_led150", "null_led150");
+      pricingConfig.luminariaLED.campana200W_taller_25m2.precioUnitarioInstalada = getValOrNull("adm_led200", "null_led200");
+      pricingConfig.electricidadPorFase.monofasica.cargoFijoTablero = getValOrNull("adm_elec_mono", "null_elec_mono");
+      pricingConfig.electricidadPorFase.bifasica.cargoFijoTablero = getValOrNull("adm_elec_bi", "null_elec_bi");
+      pricingConfig.electricidadPorFase.trifasica.cargoFijoTablero = getValOrNull("adm_elec_tri", "null_elec_tri");
+
+      pricingConfig.electricidadPorFase.monofasica.adicionalPorM2Tendido = numOrDefault("adm_elec_mono_m2", 4.5);
+      pricingConfig.electricidadPorFase.bifasica.adicionalPorM2Tendido = numOrDefault("adm_elec_bi_m2", 6.0);
+      pricingConfig.electricidadPorFase.trifasica.adicionalPorM2Tendido = numOrDefault("adm_elec_tri_m2", 9.5);
+
+      pricingConfig.hormigonadoM2["10cm"].precioM2LlaveEnMano = getValOrNull("adm_slab10", "null_slab10");
+      pricingConfig.hormigonadoM2["12cm"].precioM2LlaveEnMano = getValOrNull("adm_slab12", "null_slab12");
+      pricingConfig.hormigonadoM2["15cm"].precioM2LlaveEnMano = getValOrNull("adm_slab15", "null_slab15");
+      pricingConfig.hormigonadoM2["20cm"].precioM2LlaveEnMano = getValOrNull("adm_slab20", "null_slab20");
+
+      pricingConfig.persianasEnrollables.porton_35x35.precioUnitarioInstalada = getValOrNull("adm_porton35", "null_porton35");
+      pricingConfig.persianasEnrollables.porton_45x45.precioUnitarioInstalada = getValOrNull("adm_porton45", "null_porton45");
+      pricingConfig.persianasEnrollables.porton_50x50.precioUnitarioInstalada = getValOrNull("adm_porton50", "null_porton50");
+
+      pricingConfig.fleteNacionalDesdeDarregueira.m2PorCamionTinglado = numOrDefault("adm_cap_ting", 800);
+      pricingConfig.fleteNacionalDesdeDarregueira.m2PorCamionGalpon = numOrDefault("adm_cap_galp", 600);
+      pricingConfig.fleteNacionalDesdeDarregueira.cargoFijoZonaLocalUSD = numOrDefault("adm_flete_local", 180);
+      pricingConfig.fleteNacionalDesdeDarregueira.bajadaBanderaPorCamionUSD = numOrDefault("adm_flete_bajada", 150);
+      pricingConfig.fleteNacionalDesdeDarregueira.tarifaKmZona1RegionalUSD = numOrDefault("adm_km_z1", 2.1);
+      pricingConfig.fleteNacionalDesdeDarregueira.tarifaKmZona2MediaUSD = numOrDefault("adm_km_z2", 1.95);
+      pricingConfig.fleteNacionalDesdeDarregueira.tarifaKmZona3LargaUSD = numOrDefault("adm_km_z3", 2.25);
+
+      try {
+        localStorage.setItem("almafuerte_pricing_config", JSON.stringify(pricingConfig));
+      } catch (err) {
+        console.warn("No se pudo guardar en localStorage:", err);
+      }
+    }
+
+    function saveAdminChanges(keepModalOpen = false) {
+      collectAdminFormIntoConfig();
+      recalculateAndRender();
+      if (!keepModalOpen) {
+        closeAdminModal();
+      }
+      showRuleToast("<strong>CONFIGURACIÓN GUARDADA:</strong> Precios y tarifas logísticas actualizados en vivo.");
+    }
+
+    function applyMassPercentage() {
+      const pct = Number(document.getElementById("inpMassPercent").value) || 0;
+      if (pct === 0) return;
+      const factor = 1 + pct / 100;
+      const intIds = [
+        "adm_tinglado_m2", "adm_galpon_m2", "adm_led150", "adm_led200",
+        "adm_elec_mono", "adm_elec_bi", "adm_elec_tri",
+        "adm_slab10", "adm_slab12", "adm_slab15", "adm_slab20",
+        "adm_porton35", "adm_porton45", "adm_porton50",
+        "adm_flete_local", "adm_flete_bajada"
+      ];
+      intIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = Math.round((Number(el.value) || 0) * factor);
+      });
+      const decimalIds = [
+        "adm_elec_mono_m2", "adm_elec_bi_m2", "adm_elec_tri_m2",
+        "adm_km_z1", "adm_km_z2", "adm_km_z3"
+      ];
+      decimalIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = Number(((Number(el.value) || 0) * factor).toFixed(2));
+      });
+    }
+
+    function resetDefaultConfig() {
+      pricingConfig = JSON.parse(JSON.stringify(DEFAULT_PRICING_CONFIG));
+      try {
+        localStorage.removeItem("almafuerte_pricing_config");
+      } catch (e) {}
+      populateAdminFormFromConfig();
+      recalculateAndRender();
+      showRuleToast("<strong>VALORES RESTAURADOS:</strong> Se restableció la matriz de precios original.");
+    }
+
+    function downloadConfigFile(ext) {
+      if (document.getElementById("adminModal").classList.contains("open")) {
+        collectAdminFormIntoConfig();
+        recalculateAndRender();
+      }
+      const jsonStr = JSON.stringify(pricingConfig, null, 2);
+      const content = ext === "js" ? `window.ALMAFUERTE_PRICING_CONFIG = ${jsonStr};\n` : jsonStr;
+      const blob = new Blob([content], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = ext === "js" ? "CONFIG.js" : "pricingConfig.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // GENERADOR Y EXPORTADOR DEL ARCHIVO HTML PÚBLICO INDEPENDIENTE
+    function generatePublicHTMLString() {
+      if (document.getElementById("adminModal") && document.getElementById("adminModal").classList.contains("open")) {
+        collectAdminFormIntoConfig();
+        recalculateAndRender();
+      }
+
+      const cloneDoc = document.documentElement.cloneNode(true);
+
+      cloneDoc.querySelectorAll('[data-admin-only="true"]').forEach(el => el.remove());
+
+      const seal = cloneDoc.querySelector("#footerAdminSeal");
+      if (seal) {
+        seal.removeAttribute("title");
+      }
+
+      const toast = cloneDoc.querySelector("#ruleToast");
+      if (toast) {
+        toast.classList.remove("show");
+      }
+
+      const exportConfig = JSON.parse(JSON.stringify(pricingConfig));
+      const configScript = cloneDoc.querySelector("#pricingConfigScript");
+      if (configScript) {
+        configScript.textContent = `\n    const DEFAULT_PRICING_CONFIG = ${JSON.stringify(exportConfig, null, 2)};\n    let pricingConfig = JSON.parse(JSON.stringify(DEFAULT_PRICING_CONFIG));\n  `;
+      }
+
+      return "<!DOCTYPE html>\n" + cloneDoc.outerHTML;
+    }
+
+    function exportPublicHTML() {
+      const finalHtml = generatePublicHTMLString();
+      const blob = new Blob([finalHtml], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cotizador-almafuerte-publico.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      closeAdminModal();
+      showRuleToast("<strong>HTML PÚBLICO EXPORTADO:</strong> Se descargó <strong>cotizador-almafuerte-publico.html</strong> listo para subir a tu web.");
+    }
+
+    window.addEventListener("keydown", e => {
+      if (e.ctrlKey && e.shiftKey && (e.key === "A" || e.key === "a")) {
+        e.preventDefault();
+        openAdminModal();
+      }
+    });
+
+    let sealClicks = 0;
+    let sealTimer = null;
+    const footerSealEl = document.getElementById("footerAdminSeal");
+    if (footerSealEl) {
+      footerSealEl.setAttribute("title", "Triple clic para abrir Panel Admin");
+      footerSealEl.addEventListener("click", () => {
+        sealClicks++;
+        clearTimeout(sealTimer);
+        if (sealClicks >= 3) {
+          sealClicks = 0;
+          openAdminModal();
+        } else {
+          sealTimer = setTimeout(() => { sealClicks = 0; }, 600);
+        }
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      recalculateAndRender();
+      if (window.location.search.includes("admin=1")) {
+        openAdminModal();
+      }
+    });
+  </script>
+</body>
+</html>
